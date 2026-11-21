@@ -1,0 +1,55 @@
+{
+  "api_version": "flintyard/v1alpha1",
+  "operation_id": "11111111-1111-4111-8111-111111111111",
+  "ok": true,
+  "data": {
+    "environment_id": "22222222-2222-4222-8222-222222222222",
+    "name": "ci-lab",
+    "state": "ready",
+    "nodes": [
+      {
+        "name": "node-1",
+        "architecture": "x86_64",
+        "state": "ready",
+        "ipv4": "10.240.12.10",
+        "access": {
+          "username": "devops",
+          "host": "10.240.12.10",
+          "port": 22,
+          "probe": "ssh_banner",
+          "probe_passed": true,
+          "authenticated": false
+        }
+      },
+      {
+        "name": "node-2",
+        "architecture": "x86_64",
+        "state": "ready",
+        "ipv4": "10.240.12.11",
+        "access": {
+          "username": "devops",
+          "host": "10.240.12.11",
+          "port": 22,
+          "probe": "ssh_banner",
+          "probe_passed": true,
+          "authenticated": false
+        }
+      },
+      {
+        "name": "node-3",
+        "architecture": "x86_64",
+        "state": "ready",
+        "ipv4": "10.240.12.12",
+        "access": {
+          "username": "devops",
+          "host": "10.240.12.12",
+          "port": 22,
+          "probe": "ssh_banner",
+          "probe_passed": true,
+          "authenticated": false
+        }
+      }
+    ]
+  },
+  "error": null
+}

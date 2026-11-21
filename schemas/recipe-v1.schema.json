@@ -1,0 +1,658 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:flintyard:recipe-v1",
+  "title": "Flintyard recipe-v1",
+  "type": "object",
+  "properties": {
+    "api_version": {
+      "const": "flintyard/v1alpha1"
+    },
+    "kind": {
+      "const": "BuildRecipe"
+    },
+    "architecture": {
+      "type": "string",
+      "enum": [
+        "x86_64",
+        "aarch64"
+      ]
+    },
+    "os": {
+      "type": "object",
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "release": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "family",
+        "release"
+      ],
+      "additionalProperties": false
+    },
+    "rootfs": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "archive"
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "url": {
+                  "type": "string",
+                  "pattern": "^https://"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              },
+              "required": [
+                "sha256"
+              ],
+              "additionalProperties": false,
+              "oneOf": [
+                {
+                  "required": [
+                    "path"
+                  ],
+                  "not": {
+                    "required": [
+                      "url"
+                    ]
+                  }
+                },
+                {
+                  "required": [
+                    "url"
+                  ],
+                  "not": {
+                    "required": [
+                      "path"
+                    ]
+                  }
+                }
+              ]
+            },
+            "size_mib": {
+              "type": "integer",
+              "minimum": 64,
+              "maximum": 65536
+            }
+          },
+          "required": [
+            "kind",
+            "source",
+            "size_mib"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "raw"
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "url": {
+                  "type": "string",
+                  "pattern": "^https://"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              },
+              "required": [
+                "sha256"
+              ],
+              "additionalProperties": false,
+              "oneOf": [
+                {
+                  "required": [
+                    "path"
+                  ],
+                  "not": {
+                    "required": [
+                      "url"
+                    ]
+                  }
+                },
+                {
+                  "required": [
+                    "url"
+                  ],
+                  "not": {
+                    "required": [
+                      "path"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "source"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "kernel": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "prebuilt"
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "url": {
+                  "type": "string",
+                  "pattern": "^https://"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              },
+              "required": [
+                "sha256"
+              ],
+              "additionalProperties": false,
+              "oneOf": [
+                {
+                  "required": [
+                    "path"
+                  ],
+                  "not": {
+                    "required": [
+                      "url"
+                    ]
+                  }
+                },
+                {
+                  "required": [
+                    "url"
+                  ],
+                  "not": {
+                    "required": [
+                      "path"
+                    ]
+                  }
+                }
+              ]
+            },
+            "release": {
+              "type": "string",
+              "minLength": 1
+            },
+            "origin": {
+              "type": "string",
+              "enum": [
+                "distribution-binary",
+                "user-provided"
+              ]
+            },
+            "modules": {
+              "type": "string",
+              "enum": [
+                "rootfs",
+                "none"
+              ]
+            }
+          },
+          "required": [
+            "mode",
+            "source",
+            "release",
+            "origin",
+            "modules"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "source"
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "url": {
+                  "type": "string",
+                  "pattern": "^https://"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              },
+              "required": [
+                "sha256"
+              ],
+              "additionalProperties": false,
+              "oneOf": [
+                {
+                  "required": [
+                    "path"
+                  ],
+                  "not": {
+                    "required": [
+                      "url"
+                    ]
+                  }
+                },
+                {
+                  "required": [
+                    "url"
+                  ],
+                  "not": {
+                    "required": [
+                      "path"
+                    ]
+                  }
+                }
+              ]
+            },
+            "strip_components": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 8
+            },
+            "config_file": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096
+            },
+            "config_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "patches": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  }
+                },
+                "required": [
+                  "path",
+                  "sha256"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0,
+              "maxItems": 128
+            },
+            "image_target": {
+              "type": "string",
+              "enum": [
+                "vmlinux",
+                "bzImage",
+                "Image"
+              ]
+            },
+            "jobs": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1024
+            },
+            "timeout_seconds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 86400
+            },
+            "origin": {
+              "type": "string",
+              "enum": [
+                "distribution-source",
+                "upstream-source",
+                "user-provided"
+              ]
+            },
+            "expected_release": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "mode",
+            "source",
+            "strip_components",
+            "config_file",
+            "config_sha256",
+            "patches",
+            "image_target",
+            "jobs",
+            "timeout_seconds",
+            "origin",
+            "expected_release"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "initrd": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "path"
+          ],
+          "not": {
+            "required": [
+              "url"
+            ]
+          }
+        },
+        {
+          "required": [
+            "url"
+          ],
+          "not": {
+            "required": [
+              "path"
+            ]
+          }
+        }
+      ]
+    },
+    "generated_initrd_path": {
+      "type": "string",
+      "pattern": "^/"
+    },
+    "boot": {
+      "type": "object",
+      "properties": {
+        "root_device": {
+          "type": "string",
+          "pattern": "^/dev/"
+        },
+        "virtio_transport": {
+          "type": "string",
+          "enum": ["mmio", "pci"]
+        },
+        "kernel_args": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "minItems": 0,
+          "maxItems": 128
+        }
+      },
+      "required": [
+        "root_device",
+        "kernel_args"
+      ],
+      "additionalProperties": false
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "argv": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 16384
+            },
+            "minItems": 1,
+            "maxItems": 256
+          },
+          "working_dir": {
+            "type": "string",
+            "pattern": "^/"
+          },
+          "env": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 16384
+            }
+          },
+          "timeout_seconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 86400
+          }
+        },
+        "required": [
+          "argv",
+          "timeout_seconds"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 128
+    },
+    "guest_prepare": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "seed-v1"
+            },
+            "profile": {
+              "type": "string",
+              "enum": [
+                "systemd-networkd",
+                "networkmanager",
+                "openrc-ifupdown"
+              ]
+            },
+            "username": {
+              "type": "string",
+              "pattern": "^[a-z_][a-z0-9_-]{0,31}$"
+            },
+            "probe": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "ssh_banner",
+                    "tcp",
+                    "none"
+                  ]
+                },
+                "port": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 65535
+                }
+              },
+              "required": [
+                "type",
+                "port"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "mode",
+            "profile",
+            "username",
+            "probe"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "external"
+            },
+            "username": {
+              "type": "string",
+              "pattern": "^[a-z_][a-z0-9_-]{0,31}$"
+            },
+            "probe": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "ssh_banner",
+                    "tcp",
+                    "none"
+                  ]
+                },
+                "port": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 65535
+                }
+              },
+              "required": [
+                "type",
+                "port"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "mode",
+            "username",
+            "probe"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_.+-]+$"
+      },
+      "minItems": 0,
+      "maxItems": 64
+    },
+    "network": {
+      "type": "boolean"
+    },
+    "reproducibility": {
+      "type": "string",
+      "enum": [
+        "inputs_locked",
+        "best_effort"
+      ]
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,47}$"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "path"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "api_version",
+    "kind",
+    "architecture",
+    "os",
+    "rootfs",
+    "kernel",
+    "boot",
+    "steps",
+    "guest_prepare",
+    "requires",
+    "network",
+    "reproducibility",
+    "output"
+  ],
+  "additionalProperties": false,
+  "not": {
+    "required": [
+      "initrd",
+      "generated_initrd_path"
+    ]
+  }
+}

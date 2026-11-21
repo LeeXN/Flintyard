@@ -1,0 +1,36 @@
+{
+  "api_version": "flintyard/v1alpha1",
+  "go": {
+    "version": "go1.27.3",
+    "linux_amd64_sha256": "65efbc80fdc1fa2cd2631cad5b481777a68e8725f34e89f50fc6ac714e379b40",
+    "linux_arm64_sha256": "a06e99309dbcbdca1a8ccd2282c3ee146e55930886e26b4f1193269587165f49"
+  },
+  "firecracker": {
+    "version": "1.17.0",
+    "tag_object": "29d66eb25954dbe3608eb91c180a6079f54d2ee8",
+    "commit": "95f868c8e345b1cc8faccd1a3c910b4989dc3f58",
+    "swagger_sha256": "473a0a392927b407834b341bf5fbc7925524fedaf9d925e1bbbafb6a1f48c671",
+    "assets": {
+      "x86_64": {
+        "url": "https://github.com/firecracker-microvm/firecracker/releases/download/v1.17.0/firecracker-v1.17.0-x86_64.tgz",
+        "sha256": "06094a1108ae9e82aa4c23a775aa92758f53f1175d422270d9d6162cb9ade558",
+        "archive_verified": true,
+        "native_vm_validation": "passed"
+      },
+      "aarch64": {
+        "url": "https://github.com/firecracker-microvm/firecracker/releases/download/v1.17.0/firecracker-v1.17.0-aarch64.tgz",
+        "sha256": "e351ebe4f7a16b5873bbd51005d2e6767103cff4d5ebc829df2d3f95a93e2256",
+        "archive_verified": true,
+        "native_vm_validation": "not_run"
+      }
+    }
+  },
+  "dependencies": [
+    {
+      "module": "golang.org/x/sys",
+      "version": "v0.42.0",
+      "sum": "h1:omrd2nAlyT5ESRdCLYdm3+fMfNFE/+Rf4bDIQImRJeo=",
+      "go_mod_sum": "h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw="
+    }
+  ]
+}

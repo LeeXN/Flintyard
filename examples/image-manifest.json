@@ -1,0 +1,63 @@
+{
+  "api_version": "flintyard/v1alpha1",
+  "kind": "Image",
+  "name": "ubuntu-example",
+  "version": "24.04-example",
+  "architecture": "x86_64",
+  "os": {
+    "family": "ubuntu",
+    "release": "24.04"
+  },
+  "boot": {
+    "kernel_path": "payload/kernel",
+    "rootfs_path": "payload/rootfs.raw",
+    "root_device": "/dev/vda",
+    "kernel_args": [
+      "console=ttyS0",
+      "reboot=k",
+      "panic=1"
+    ]
+  },
+  "kernel": {
+    "release": "6.8.0-example",
+    "origin": "distribution-binary",
+    "modules": "embedded",
+    "config_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "initialization": {
+    "mode": "seed-v1",
+    "profile": "systemd-networkd",
+    "username": "devops",
+    "probe": {
+      "type": "ssh_banner",
+      "port": 22
+    }
+  },
+  "provenance": {
+    "inputs": [
+      {
+        "kind": "rootfs",
+        "source": "local:fixtures/ubuntu-rootfs.tar.xz",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    ],
+    "built_at": "2026-11-03T00:00:00Z",
+    "recipe_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "reproducibility": "best_effort",
+    "builder": "flintyard/v0.1.0"
+  },
+  "payloads": [
+    {
+      "path": "payload/kernel",
+      "role": "kernel",
+      "size_bytes": 33554432,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "path": "payload/rootfs.raw",
+      "role": "rootfs",
+      "size_bytes": 4294967296,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ]
+}

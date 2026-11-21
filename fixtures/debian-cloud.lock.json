@@ -1,0 +1,68 @@
+{
+  "api_version": "flintyard.fixture-cloud/v1",
+  "family": "debian",
+  "release": "13",
+  "build": "20261103-2651",
+  "checksum_url": "https://cloud.debian.org/images/cloud/trixie/20261103-2651/SHA512SUMS",
+  "signature_verified": false,
+  "architectures": {
+    "x86_64": {
+      "url": "https://cloud.debian.org/images/cloud/trixie/20261103-2651/debian-13-genericcloud-amd64-20261103-2651.tar.xz",
+      "archive_sha512": "f426e26485b3549b360aab272444675951d942b01a7ab1e9cfec1d5be1660d92b6d12892efd282bb88b7e188dc1faaa1ca0370d6fe074e2a02a1f321d497c30b",
+      "archive_sha256": "a46a0f46ee30af2c082c3e4cb7395f219d0e3bc37b1b5335aa069a4f82afc536",
+      "archive_size": 228474592,
+      "metadata_sha256": "946b71e980a4903c61d6b72b94d30852399c37888be448d0786d0192ab239f8e",
+      "disk_sha256": "f9856cf9436380b817010e38b9b5f79bd5db6f5756e459615e43e6d388427b34",
+      "disk_size": 3221225472,
+      "partition_type": "4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709",
+      "partition_uuid": "3612A9BF-C7CF-40CB-9789-6117E94B7DB6",
+      "partition_offset": 134217728,
+      "partition_size": 3085959168,
+      "rootfs_sha256": "3020c33b05594a6cd3fe93532dfe990be657d99f61a19400f4b1f9ec45db9edd",
+      "kernel_release": "6.12.115+deb13.1-cloud-amd64",
+      "boot_files": {
+        "kernel": {
+          "sha256": "d3621669410ca94b40d6d9552957dd9a9aacd4a83655bd36b1c1c39f7b4ff113",
+          "size": 11737024
+        },
+        "initrd": {
+          "sha256": "b52a33bdc01448635535d75a07be79ef4c26aa822b83ec08220bf4ff23460c1e",
+          "size": 18301174
+        },
+        "config": {
+          "sha256": "23f657f2e1e84553eb8f1fc7972c4014107ebe9ea85579318fbb788c9ce477a8",
+          "size": 132853
+        }
+      }
+    },
+    "aarch64": {
+      "url": "https://cloud.debian.org/images/cloud/trixie/20261103-2651/debian-13-genericcloud-arm64-20261103-2651.tar.xz",
+      "archive_sha512": "0f958221800b9714b38f8d491a603254c34e98f3f135ac728fd283289b65cf02653bc2fe67d649a1de41a50723814bffd4e2a6b6c7b71a7467ef523140a7e4c8",
+      "archive_sha256": "cad950a472c86d7a61c159b2d3dbe3b274a76605b52cf16a2eec6941a4cf7dda",
+      "archive_size": 213914468,
+      "metadata_sha256": "415a15b6bc477ae890d276cc1d14e463f51f6aaf9e868df5ae7c67771ef6d815",
+      "disk_sha256": "b79b333edd3a4c51b000c566c9e6faaa6ea05889350fb6158f83a91637bb06c4",
+      "disk_size": 3221225472,
+      "partition_type": "B921B045-1DF0-41C3-AF44-4C6F280D3FAE",
+      "partition_uuid": "FA444F0D-8749-4C7A-8D75-9C37FCBBFC94",
+      "partition_offset": 134217728,
+      "partition_size": 3085959168,
+      "rootfs_sha256": "d67c117fde21b5825d533cf82e9c2add5068c462de5b2d2305b4610f0b6d5ae9",
+      "kernel_release": "6.12.115+deb13.1-cloud-arm64",
+      "boot_files": {
+        "kernel": {
+          "sha256": "8268e1ae2a21640d7337e24507426807c99214a3a6f2e37815f0e7df9988b0c0",
+          "size": 30894016
+        },
+        "initrd": {
+          "sha256": "8b901485f276d056c277220501a20384293ef3cc09585e72f64d1073e149c3ff",
+          "size": 17984331
+        },
+        "config": {
+          "sha256": "0615501792dbdc7b88188882012d3fd0818fe528ffd791d175a5c32280be4015",
+          "size": 141499
+        }
+      }
+    }
+  }
+}

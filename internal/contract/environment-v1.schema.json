@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:flintyard:environment-v1",
+  "title": "Flintyard environment-v1",
+  "type": "object",
+  "properties": {
+    "api_version": {
+      "const": "flintyard/v1alpha1"
+    },
+    "kind": {
+      "const": "Environment"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,47}$"
+    },
+    "architecture": {
+      "type": "string",
+      "enum": [
+        "x86_64",
+        "aarch64"
+      ]
+    },
+    "network": {
+      "type": "object",
+      "properties": {
+        "cidr": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "nat": {
+          "type": "boolean"
+        },
+        "dns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "ipv4"
+          },
+          "minItems": 0,
+          "maxItems": 8
+        },
+        "egress_interface": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 15
+        }
+      },
+      "required": [
+        "cidr",
+        "nat",
+        "dns"
+      ],
+      "additionalProperties": false
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,47}$"
+          },
+          "image": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "vcpu_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 256
+          },
+          "memory_mib": {
+            "type": "integer",
+            "minimum": 128,
+            "maximum": 1048576
+          },
+          "ipv4": {
+            "type": "string",
+            "format": "ipv4"
+          }
+        },
+        "required": [
+          "name",
+          "image",
+          "vcpu_count",
+          "memory_mib"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "maxItems": 128
+    },
+    "access": {
+      "type": "object",
+      "properties": {
+        "public_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "probe": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ssh_banner",
+                "tcp",
+                "none"
+              ]
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            }
+          },
+          "required": [
+            "type",
+            "port"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "probe"
+      ],
+      "additionalProperties": false
+    },
+    "port_forwards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "protocol": {
+            "type": "string",
+            "enum": [
+              "tcp",
+              "udp"
+            ]
+          },
+          "bind_address": {
+            "type": "string",
+            "format": "ipv4"
+          },
+          "host_port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "node": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,47}$"
+          },
+          "guest_port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          }
+        },
+        "required": [
+          "protocol",
+          "bind_address",
+          "host_port",
+          "node",
+          "guest_port"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 256
+    }
+  },
+  "required": [
+    "api_version",
+    "kind",
+    "name",
+    "architecture",
+    "network",
+    "nodes",
+    "access",
+    "port_forwards"
+  ],
+  "additionalProperties": false
+}

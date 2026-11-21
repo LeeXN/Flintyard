@@ -1,0 +1,50 @@
+{
+  "api_version": "flintyard/v1alpha1",
+  "kind": "Environment",
+  "name": "ci-lab",
+  "architecture": "x86_64",
+  "network": {
+    "cidr": "10.240.12.0/24",
+    "nat": true,
+    "dns": [
+      "192.0.2.53"
+    ],
+    "egress_interface": "eth0"
+  },
+  "nodes": [
+    {
+      "name": "node-1",
+      "image": "images/ubuntu-x86_64.fyimg",
+      "vcpu_count": 2,
+      "memory_mib": 1024
+    },
+    {
+      "name": "node-2",
+      "image": "images/ubuntu-x86_64.fyimg",
+      "vcpu_count": 2,
+      "memory_mib": 1024
+    },
+    {
+      "name": "node-3",
+      "image": "images/ubuntu-x86_64.fyimg",
+      "vcpu_count": 2,
+      "memory_mib": 1024
+    }
+  ],
+  "access": {
+    "public_key": "keys/ci_ed25519.pub",
+    "probe": {
+      "type": "ssh_banner",
+      "port": 22
+    }
+  },
+  "port_forwards": [
+    {
+      "protocol": "tcp",
+      "bind_address": "127.0.0.1",
+      "host_port": 2201,
+      "node": "node-1",
+      "guest_port": 22
+    }
+  ]
+}

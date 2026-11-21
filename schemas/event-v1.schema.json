@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:flintyard:event-v1",
+  "title": "Flintyard event-v1",
+  "type": "object",
+  "properties": {
+    "api_version": {
+      "const": "flintyard/v1alpha1"
+    },
+    "operation_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "parse",
+        "preflight",
+        "import",
+        "build",
+        "network",
+        "disks",
+        "seed",
+        "launch",
+        "api",
+        "probe",
+        "commit",
+        "rollback",
+        "cleanup"
+      ]
+    },
+    "resource_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "node": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "started",
+        "progress",
+        "succeeded",
+        "failed",
+        "cancelled"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "current": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    }
+  },
+  "required": [
+    "api_version",
+    "operation_id",
+    "sequence",
+    "time",
+    "stage",
+    "resource_id",
+    "node",
+    "status",
+    "message"
+  ],
+  "additionalProperties": false
+}

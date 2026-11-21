@@ -1,0 +1,38 @@
+{
+  "api_version": "flintyard.fixture-rocky-kernel/v1",
+  "family": "rocky",
+  "release": "9.8",
+  "package_version": "5.14.0-687.66.1.el9_8",
+  "signing_key_fingerprint": "21CB256AE16FC54C6E652949702D426D350D275D",
+  "signing_key_sha256": "3a66e521e7a4abac9768d889c7cd60a8250f59512b275cf576c8a10ff34624c1",
+  "signing_key_url": "https://dl.rockylinux.org/pub/rocky/RPM-GPG-KEY-Rocky-9",
+  "fingerprint_reference": "https://rockylinux.org/resources/gpg-key-info",
+  "verification": "RPM header signatures and payload digests verified with fingerprint-matched Rocky 9 key in a private RPM database",
+  "architectures": {
+    "x86_64": {
+      "kernel_release": "5.14.0-687.66.1.el9_8.x86_64",
+      "package_url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/k/kernel-core-5.14.0-687.66.1.el9_8.x86_64.rpm",
+      "package_sha256": "59cc3c7a47389547421eb6ecf468bfab77b2883868bb170936de3138731ffcc8",
+      "package_size": 18231921,
+      "packaged_kernel_sha256": "26c86ec188d7367b5df75e0719147a68fe53b441d026ae4ea8a6756c7685858f",
+      "packaged_kernel_size": 15186760,
+      "runtime_kernel_sha256": "26c86ec188d7367b5df75e0719147a68fe53b441d026ae4ea8a6756c7685858f",
+      "runtime_kernel_size": 15186760,
+      "config_sha256": "5f4df05225c96affbd1d33f2db0c738c6677bea4e40407eebac4274f7e20b2c7",
+      "config_size": 239910
+    },
+    "aarch64": {
+      "kernel_release": "5.14.0-687.66.1.el9_8.aarch64",
+      "package_url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/k/kernel-core-5.14.0-687.66.1.el9_8.aarch64.rpm",
+      "package_sha256": "576ec6f84524cb73f168bbe0f0ceafa2bbaf76fb7f2cd1e3c2e4a3372c3f2330",
+      "package_size": 16903753,
+      "packaged_kernel_sha256": "c8ee9426921a7487a822e6119f338d3cd8b68ccc4b8503a8dceff0402aec9639",
+      "packaged_kernel_size": 13413208,
+      "embedded_gzip_offset": 46456,
+      "runtime_kernel_sha256": "791dd080c48d30ac366d758d99b34eb5f1c527a206c8c0111666308ffa7901da",
+      "runtime_kernel_size": 42140160,
+      "config_sha256": "f939f18f0720463d55ccb5bc991cc7905cbfbd2da6c2ecbad703f3bcfd1184f9",
+      "config_size": 222170
+    }
+  }
+}

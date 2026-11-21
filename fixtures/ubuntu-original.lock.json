@@ -1,0 +1,63 @@
+{
+  "api_version": "flintyard.fixture-ubuntu-kernel/v1",
+  "family": "ubuntu",
+  "release": "24.04",
+  "kernel_release": "6.8.0-147-generic",
+  "package_version": "6.8.0-147.147",
+  "repository_signing_key_fingerprint": "F6ECB3762474EDA9D21B7022871920D1991BC93C",
+  "verification": "InRelease verified with installed Ubuntu archive keyring; package SHA-256 verified against signed index",
+  "keyring_sha256": "1a4dd63e5c76728960a2edddae22e2e0fc53df8e8b87806deb971030ac704eb0",
+  "base_rootfs_signature_verified": false,
+  "architectures": {
+    "x86_64": {
+      "base_rootfs_sha256": "16c3b2e7f00af4287db4d5fa7ec47825a2c189b35c9e47f2db875ef4f3532107",
+      "base_rootfs_tar_sha256": "856bf568920bb67624a97a5deb377c6ceaf4006ca402d2e34f7bc6cc6625aa78",
+      "inrelease_sha256": "5c8e0544f0611f482f896759dd6bc6daab4a69d005fe6b7b1d611b0711c27a1f",
+      "index_sha256": "0073af83da02318c32dc3d821d6633b814e4479cb7e9fd03099293f5c4bae677",
+      "image_package": {
+        "url": "https://archive.ubuntu.com/ubuntu/pool/main/l/linux-signed/linux-image-6.8.0-147-generic_6.8.0-147.147_amd64.deb",
+        "sha256": "08432502e565a8a3b4ab13bd8b01788a0a83c9398c8a1e9350f1225991bc4fbb",
+        "size": 14845068
+      },
+      "modules_package": {
+        "url": "https://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-modules-6.8.0-147-generic_6.8.0-147.147_amd64.deb",
+        "sha256": "3b9188304d600fc35a4f4d1f99751f7ea485bb7f9e0cb87831d4ebf2d3423d9d",
+        "size": 39250112
+      },
+      "packaged_kernel_sha256": "41ba36d860aa0b0cd995f4ca8856d80249b244577e704929b55be13fbd1ebd2f",
+      "runtime_kernel_sha256": "41ba36d860aa0b0cd995f4ca8856d80249b244577e704929b55be13fbd1ebd2f",
+      "config_sha256": "cf8454bc2e67effab87a5bff3c39042f2d8d106b6a777c4302e52f50d23b7400",
+      "rootfs_sha256": "59673e6b6a7d18dbbb55721041c5d8cdf4aaf890ebd072ab8c5f37e3616a8c71",
+      "rootfs_tar_sha256": "4d0348d1131c22eb8fd53d37b03290db6b7fc8fe50be49b61eca45af43ac8887",
+      "inrelease_url": "https://archive.ubuntu.com/ubuntu/dists/noble-updates/InRelease",
+      "index_url": "https://archive.ubuntu.com/ubuntu/dists/noble-updates/main/binary-amd64/Packages.xz",
+      "packaged_kernel_size": 15083912,
+      "config_size": 287601
+    },
+    "aarch64": {
+      "base_rootfs_sha256": "396e3fc6233dc4b221754fca2e2ab6afaa5a663fbf2a65cae17b35c6af7705fc",
+      "base_rootfs_tar_sha256": "849cbff29009a1b82827e028964a5b4a55c37b8123f0a799fad9f500df652778",
+      "inrelease_sha256": "aa332fd695208cded06c243b09cc90883b6e7ac61e27dea91dd5ed8b4cae2fa7",
+      "index_sha256": "0f08c32f04cb5e8491d30e9692b72515b61414b9f304d04609cb65fb3902bac5",
+      "image_package": {
+        "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/l/linux-signed/linux-image-6.8.0-147-generic_6.8.0-147.147_arm64.deb",
+        "sha256": "75159df987469ba9feb93a638a7f2a42511802fbf0f06ff891d2702bd7d3b23c",
+        "size": 18313352
+      },
+      "modules_package": {
+        "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/l/linux/linux-modules-6.8.0-147-generic_6.8.0-147.147_arm64.deb",
+        "sha256": "239a4875906964ce805eede85ac2a7ee8785c38eba307a5861f99ca52d7d7b6d",
+        "size": 87152832
+      },
+      "packaged_kernel_sha256": "353bab8eeaad9caf931dd85fd7a7bf8800d2669d759c0369ffaba7abc03a7aff",
+      "runtime_kernel_sha256": "ce78832564a2705c98d474fe487f11dbd6823eb0c5f5c162ebf1e760089b504f",
+      "config_sha256": "42a84d1758a4a33b07962624f41fcc41cc45a0ef8b6b0b1e0b2a1118a1ba5287",
+      "rootfs_sha256": "2d6555ac63fc93ef68fadf39a7f961b9e7c636cb21b55ca4a17ab8a2a7cdb5c2",
+      "rootfs_tar_sha256": "9fd5b77545c5e3a0d6128d09877936dc957d7b6b68d877e0faa2cb05c38694a4",
+      "inrelease_url": "https://ports.ubuntu.com/ubuntu-ports/dists/noble-updates/InRelease",
+      "index_url": "https://ports.ubuntu.com/ubuntu-ports/dists/noble-updates/main/binary-arm64/Packages.xz",
+      "packaged_kernel_size": 18600927,
+      "config_size": 337427
+    }
+  }
+}

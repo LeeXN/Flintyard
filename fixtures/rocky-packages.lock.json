@@ -1,0 +1,391 @@
+{
+  "api_version": "flintyard.fixture-rocky-rpms/v1",
+  "kernel_package_version": "5.14.0-687.66.1.el9_8",
+  "repository": "Rocky 9.8 vault BaseOS and AppStream",
+  "packages": {
+    "x86_64": {
+      "NetworkManager-1.54.3-5.el9_8.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/n/NetworkManager-1.54.3-5.el9_8.x86_64.rpm",
+        "sha256": "1b48e6b16b1ba21ac161c88c9887b021a67c77f24371803434c33b7e78405c7c",
+        "size": 2472633
+      },
+      "NetworkManager-libnm-1.54.3-5.el9_8.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/n/NetworkManager-libnm-1.54.3-5.el9_8.x86_64.rpm",
+        "sha256": "9feb8ff34fa71920b9c1a8ce5c611c81dc4ee1586290e3c542750a7c1caa9f6d",
+        "size": 1976856
+      },
+      "acl-2.3.1-4.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/a/acl-2.3.1-4.el9.x86_64.rpm",
+        "sha256": "6e3673a879e19461e2404f18a999725f7b796344885150dc6e2c81502419867b",
+        "size": 70898
+      },
+      "cpio-2.13-16.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/c/cpio-2.13-16.el9.x86_64.rpm",
+        "sha256": "7143e372db516da138e6c6ed9dc3570dea42394415b2806ab1b06463b4f94395",
+        "size": 276720
+      },
+      "cryptsetup-libs-2.8.1-3.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/c/cryptsetup-libs-2.8.1-3.el9.x86_64.rpm",
+        "sha256": "21a0f0dca33ce3ae80c79db37dd0e3343eebff58c7bc1c60930b04991d374701",
+        "size": 572242
+      },
+      "dbus-1.12.20-8.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/d/dbus-1.12.20-8.el9.x86_64.rpm",
+        "sha256": "f9ab612861c66de02ad73a0ffb56b2f83b71de2326ea595ffeac47eea517e18f",
+        "size": 7005
+      },
+      "dbus-broker-28-9.el9_8.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/d/dbus-broker-28-9.el9_8.x86_64.rpm",
+        "sha256": "fc1775336f65da4c997c0dd832065d679b13a603ab7679c826c9ac3a08bb4c6d",
+        "size": 173162
+      },
+      "dbus-common-1.12.20-8.el9.noarch.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/d/dbus-common-1.12.20-8.el9.noarch.rpm",
+        "sha256": "1dd8709f43f63277d6305b2ef572cb091ef748ce1588a0bafc95866c397335b9",
+        "size": 13888
+      },
+      "device-mapper-1.02.207-4.el9.1.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/d/device-mapper-1.02.207-4.el9.1.x86_64.rpm",
+        "sha256": "752cce161260aecfeb017d56548224bf3b37fa91e33a807ac37e28c4a655785d",
+        "size": 141229
+      },
+      "device-mapper-libs-1.02.207-4.el9.1.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/d/device-mapper-libs-1.02.207-4.el9.1.x86_64.rpm",
+        "sha256": "0640018f65402841563c3d935b3f15367a6c181fdecdb876524e157cd9aa2f92",
+        "size": 183706
+      },
+      "dracut-057-120.git20260728.el9_8.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/d/dracut-057-120.git20260728.el9_8.x86_64.rpm",
+        "sha256": "3081453c7a3bf283f929c2faf0241768d00e0664ed7c41d931ba300174d066bc",
+        "size": 395029
+      },
+      "iproute-6.17.0-2.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/i/iproute-6.17.0-2.el9.x86_64.rpm",
+        "sha256": "85da7484cf9fae2aefe2eb01146359657129bf6700b424e2d042a400970a51cd",
+        "size": 857729
+      },
+      "kbd-2.4.0-12.el9_8.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/k/kbd-2.4.0-12.el9_8.x86_64.rpm",
+        "sha256": "f70d6ab14b2c2d27ba78d5ffc42697c170d3b0618103c12e2379c6ae1d0f4d8a",
+        "size": 391944
+      },
+      "kbd-legacy-2.4.0-12.el9_8.noarch.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/k/kbd-legacy-2.4.0-12.el9_8.noarch.rpm",
+        "sha256": "c515b5181449c4eadb7520c6dcc40aced170cb816e2ad7af7414ca5ec7db72da",
+        "size": 513905
+      },
+      "kbd-misc-2.4.0-12.el9_8.noarch.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/k/kbd-misc-2.4.0-12.el9_8.noarch.rpm",
+        "sha256": "a9686ef04eee7c11331fa5675e4bdcd702f66abb2272e38115ff1dd09fc8995f",
+        "size": 1575398
+      },
+      "kernel-core-5.14.0-687.66.1.el9_8.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/k/kernel-core-5.14.0-687.66.1.el9_8.x86_64.rpm",
+        "sha256": "59cc3c7a47389547421eb6ecf468bfab77b2883868bb170936de3138731ffcc8",
+        "size": 18231921
+      },
+      "kernel-modules-5.14.0-687.66.1.el9_8.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-687.66.1.el9_8.x86_64.rpm",
+        "sha256": "fbb3fc4a060a67da1dc3d567294888546cd973034169e8a21a342da802e4ad58",
+        "size": 41793501
+      },
+      "kernel-modules-core-5.14.0-687.66.1.el9_8.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/k/kernel-modules-core-5.14.0-687.66.1.el9_8.x86_64.rpm",
+        "sha256": "016d248804605455c5770d46dc1b05e14782950e707146947fe83443c21825f6",
+        "size": 32341121
+      },
+      "kmod-28-11.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/k/kmod-28-11.el9.x86_64.rpm",
+        "sha256": "d60b35d04b0f9aec792047990fa6c6ad7b57e8531dfa307ce1987301567fb2a0",
+        "size": 123747
+      },
+      "kmod-libs-28-11.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/k/kmod-libs-28-11.el9.x86_64.rpm",
+        "sha256": "f994cf4f4d1bea1b5ce9b3f1eb7ec01eba9562cdaa3c7af9fd58fe8771720916",
+        "size": 63663
+      },
+      "kpartx-0.8.7-45.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/k/kpartx-0.8.7-45.el9.x86_64.rpm",
+        "sha256": "801c5dca05937fb112b17237577c1fa48c3977d4364b613972f455c8e0848785",
+        "size": 50359
+      },
+      "libbpf-1.5.0-3.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/l/libbpf-1.5.0-3.el9.x86_64.rpm",
+        "sha256": "3ec88205f695c54709581e8623a65decd8b5de769c266c70e8e1dba593c34f92",
+        "size": 188810
+      },
+      "libkcapi-1.4.0-3.el9_8.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/l/libkcapi-1.4.0-3.el9_8.x86_64.rpm",
+        "sha256": "76492589e703aa9cb393bed8da3127453b1b2f74a32f909757e54e4fe9783d2c",
+        "size": 45813
+      },
+      "libkcapi-hmaccalc-1.4.0-3.el9_8.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/l/libkcapi-hmaccalc-1.4.0-3.el9_8.x86_64.rpm",
+        "sha256": "f6e83f186ca65d8cda61c6856acc1eea3b299a48aa3c11c68684c7532c4c28e4",
+        "size": 23495
+      },
+      "libmnl-1.0.4-16.el9_4.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/l/libmnl-1.0.4-16.el9_4.x86_64.rpm",
+        "sha256": "de67327a302fe3ec5a33d26f600e6450c9b4de408013fe5ca7747cade407131f",
+        "size": 27847
+      },
+      "libndp-1.9-1.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/l/libndp-1.9-1.el9.x86_64.rpm",
+        "sha256": "327acd159405481a0f4d839f62371956db8ac5046594fdab1f3444b40d3a25dd",
+        "size": 37493
+      },
+      "libseccomp-2.5.2-2.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/l/libseccomp-2.5.2-2.el9.x86_64.rpm",
+        "sha256": "c5043228059ffb4e2ef855671909b22bd42784907979a27d25ca9f5163408ad1",
+        "size": 72270
+      },
+      "openssh-9.9p1-13.el9_8.rocky.0.1.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/o/openssh-9.9p1-13.el9_8.rocky.0.1.x86_64.rpm",
+        "sha256": "5fba824f2074e5ffd517857e8b13d3a1127b99e131aef0e207dab0ee924dc5c4",
+        "size": 432569
+      },
+      "openssh-server-9.9p1-13.el9_8.rocky.0.1.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/o/openssh-server-9.9p1-13.el9_8.rocky.0.1.x86_64.rpm",
+        "sha256": "294546871dfee39d000a78af35a16f139e1c0db7519d57a440ce561d03d08fb7",
+        "size": 558028
+      },
+      "pigz-2.8-1.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/p/pigz-2.8-1.el9.x86_64.rpm",
+        "sha256": "df4dca9b8f7c2800589297627fef42867d71e31bdde56d964883a046a7864980",
+        "size": 95603
+      },
+      "procps-ng-3.3.17-14.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/p/procps-ng-3.3.17-14.el9.x86_64.rpm",
+        "sha256": "feb7c39d75f2f7dbf8a261e0d32ca43788ef6a0bcaa2e0f21a09c46659531e8c",
+        "size": 339655
+      },
+      "psmisc-23.4-3.el9.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/p/psmisc-23.4-3.el9.x86_64.rpm",
+        "sha256": "c6bb80487a9518ffd9956018f7577f93d011d28077ca4453a97701a181269745",
+        "size": 231640
+      },
+      "systemd-252-67.el9_8.6.rocky.0.1.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/s/systemd-252-67.el9_8.6.rocky.0.1.x86_64.rpm",
+        "sha256": "ccc3ceac309c0829ec7a6c03cc22a95f131041098e58b82dca823b6327c6f166",
+        "size": 4189261
+      },
+      "systemd-libs-252-67.el9_8.6.rocky.0.1.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/s/systemd-libs-252-67.el9_8.6.rocky.0.1.x86_64.rpm",
+        "sha256": "323d37ea3cdb339955f875a3686580dd668db33c781306e49744a18751b543ae",
+        "size": 652032
+      },
+      "systemd-pam-252-67.el9_8.6.rocky.0.1.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/s/systemd-pam-252-67.el9_8.6.rocky.0.1.x86_64.rpm",
+        "sha256": "fd5022a6892543d143fff8c5b143775c51666966c10120d2ab26ecbe795f4ad6",
+        "size": 250125
+      },
+      "systemd-rpm-macros-252-67.el9_8.6.rocky.0.1.noarch.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/s/systemd-rpm-macros-252-67.el9_8.6.rocky.0.1.noarch.rpm",
+        "sha256": "8a2be045005e4317db4c38a1c4e120d7f27f3485682d0d5e945b8a3741017d39",
+        "size": 32654
+      },
+      "systemd-udev-252-67.el9_8.6.rocky.0.1.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/s/systemd-udev-252-67.el9_8.6.rocky.0.1.x86_64.rpm",
+        "sha256": "f4e56f277d3c7ce8b7cc2ed8d6d163e8615a808120a53c2f3d63c45b77b0b70f",
+        "size": 2004353
+      },
+      "xz-5.2.5-8.el9_0.x86_64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/x86_64/os/Packages/x/xz-5.2.5-8.el9_0.x86_64.rpm",
+        "sha256": "41043f1c47c48b956cfcc24f3640225120089fad47c87a954c81828ab77e7c46",
+        "size": 219170
+      }
+    },
+    "aarch64": {
+      "NetworkManager-1.54.3-5.el9_8.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/n/NetworkManager-1.54.3-5.el9_8.aarch64.rpm",
+        "sha256": "8ea3c28746c11fdd36373bfcd49e00b60f18b0aba96382b61e0a223e8b1fd520",
+        "size": 2310488
+      },
+      "NetworkManager-libnm-1.54.3-5.el9_8.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/n/NetworkManager-libnm-1.54.3-5.el9_8.aarch64.rpm",
+        "sha256": "845c1d583dbf8d3e7a43886937451e8e4d9a70b61d4c28f81a8f82f6d566fc25",
+        "size": 1953159
+      },
+      "acl-2.3.1-4.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/a/acl-2.3.1-4.el9.aarch64.rpm",
+        "sha256": "53d91fdf7d3ddcb44c2ba85fe858fc84f4652fc52aa75052cdf26b9033064b01",
+        "size": 70975
+      },
+      "cpio-2.13-16.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/c/cpio-2.13-16.el9.aarch64.rpm",
+        "sha256": "f5dfe1c4546d184f76278c84bda687f26f58fb91797ee7eb37e3359441deb20b",
+        "size": 274088
+      },
+      "cryptsetup-libs-2.8.1-3.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/c/cryptsetup-libs-2.8.1-3.el9.aarch64.rpm",
+        "sha256": "ca5e0415943edd392674814fbd3ea3f19c2ad2728969a9ae1e0a74d3bbd61eef",
+        "size": 568619
+      },
+      "dbus-1.12.20-8.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/d/dbus-1.12.20-8.el9.aarch64.rpm",
+        "sha256": "b3bde1dd40048ed14f0e42343ff0979e589a41b0954b89f8a23d57892d688106",
+        "size": 6957
+      },
+      "dbus-broker-28-9.el9_8.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/d/dbus-broker-28-9.el9_8.aarch64.rpm",
+        "sha256": "01e7efb4ab0909d0082fdf6f88c515dd4fe8556c1d8d5586ad37439c16e605f4",
+        "size": 166852
+      },
+      "dbus-common-1.12.20-8.el9.noarch.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/d/dbus-common-1.12.20-8.el9.noarch.rpm",
+        "sha256": "1dd8709f43f63277d6305b2ef572cb091ef748ce1588a0bafc95866c397335b9",
+        "size": 13888
+      },
+      "device-mapper-1.02.207-4.el9.1.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/d/device-mapper-1.02.207-4.el9.1.aarch64.rpm",
+        "sha256": "44408eefa5d3738e3c0a831f9f8741bf9230beb7a785c5f382aa0ab99a7bded3",
+        "size": 139190
+      },
+      "device-mapper-libs-1.02.207-4.el9.1.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/d/device-mapper-libs-1.02.207-4.el9.1.aarch64.rpm",
+        "sha256": "eaeb925cb9238793919c06bd02404e42b3abde286338ee89401c4c7a812b690e",
+        "size": 177004
+      },
+      "dracut-057-120.git20260728.el9_8.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/d/dracut-057-120.git20260728.el9_8.aarch64.rpm",
+        "sha256": "a5293623986b7e5b3776916e4bbdaabdbd1bb3b5403da1115a9859987e4a92d5",
+        "size": 393339
+      },
+      "iproute-6.17.0-2.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/i/iproute-6.17.0-2.el9.aarch64.rpm",
+        "sha256": "30e1b018cc11dbfc6618983c59636c801f295fab2271f6fbd780c93e31253d43",
+        "size": 862727
+      },
+      "kbd-2.4.0-12.el9_8.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/k/kbd-2.4.0-12.el9_8.aarch64.rpm",
+        "sha256": "9ad4b5dc3ebac5040693825a49c4ef23f26efd1c1c2da8707a4cbd16ef4916be",
+        "size": 378564
+      },
+      "kbd-legacy-2.4.0-12.el9_8.noarch.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/k/kbd-legacy-2.4.0-12.el9_8.noarch.rpm",
+        "sha256": "c515b5181449c4eadb7520c6dcc40aced170cb816e2ad7af7414ca5ec7db72da",
+        "size": 513905
+      },
+      "kbd-misc-2.4.0-12.el9_8.noarch.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/k/kbd-misc-2.4.0-12.el9_8.noarch.rpm",
+        "sha256": "a9686ef04eee7c11331fa5675e4bdcd702f66abb2272e38115ff1dd09fc8995f",
+        "size": 1575398
+      },
+      "kernel-core-5.14.0-687.66.1.el9_8.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/k/kernel-core-5.14.0-687.66.1.el9_8.aarch64.rpm",
+        "sha256": "576ec6f84524cb73f168bbe0f0ceafa2bbaf76fb7f2cd1e3c2e4a3372c3f2330",
+        "size": 16903753
+      },
+      "kernel-modules-5.14.0-687.66.1.el9_8.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/k/kernel-modules-5.14.0-687.66.1.el9_8.aarch64.rpm",
+        "sha256": "ff471ba84345a88f4aa5ce2e5110f6b82b3045feb8eecf7e35e8859a5de8cc17",
+        "size": 26601349
+      },
+      "kernel-modules-core-5.14.0-687.66.1.el9_8.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/k/kernel-modules-core-5.14.0-687.66.1.el9_8.aarch64.rpm",
+        "sha256": "b4a1b88d6f8efb52710358796e0e0e41528e92f1c4b47e8a208838e479405243",
+        "size": 25892173
+      },
+      "kmod-28-11.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/k/kmod-28-11.el9.aarch64.rpm",
+        "sha256": "5f6983d675a0e2fe457574fde46c71056a69418f72fa7da56261613476683b70",
+        "size": 121812
+      },
+      "kmod-libs-28-11.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/k/kmod-libs-28-11.el9.aarch64.rpm",
+        "sha256": "efdbd3d498f8a912cf38366137d821ced87ceb8a30fdcf55eb74ed92b864cd55",
+        "size": 62219
+      },
+      "kpartx-0.8.7-45.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/k/kpartx-0.8.7-45.el9.aarch64.rpm",
+        "sha256": "74ded8e9d2504a973182730b8be0d57973f7ac56b4e7d811ff76171ce181a9d8",
+        "size": 49721
+      },
+      "libbpf-1.5.0-3.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/l/libbpf-1.5.0-3.el9.aarch64.rpm",
+        "sha256": "52f8af37c7a70240739340cc108d6fef5b26f11d6e81428a507485ee4243fde3",
+        "size": 188823
+      },
+      "libkcapi-1.4.0-3.el9_8.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/l/libkcapi-1.4.0-3.el9_8.aarch64.rpm",
+        "sha256": "ec22166572ea73753cfd323a550375e4e07c513fbb8865d2f3c882c16509133a",
+        "size": 45708
+      },
+      "libkcapi-hmaccalc-1.4.0-3.el9_8.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/l/libkcapi-hmaccalc-1.4.0-3.el9_8.aarch64.rpm",
+        "sha256": "ef7c0cbb06c709f09880d9c463fbd07d8c22b2ba7e539420787c5bd1dad75943",
+        "size": 23212
+      },
+      "libmnl-1.0.4-16.el9_4.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/l/libmnl-1.0.4-16.el9_4.aarch64.rpm",
+        "sha256": "346b117a17184d225605e8ced26a1b37b45e7a1c4fe34580b61dca2fdb2324d0",
+        "size": 27358
+      },
+      "libndp-1.9-1.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/l/libndp-1.9-1.el9.aarch64.rpm",
+        "sha256": "c6aad1471cf6720d3ed306302899e2a27b3284bec31fc898f00ad58a6a984940",
+        "size": 36765
+      },
+      "libseccomp-2.5.2-2.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/l/libseccomp-2.5.2-2.el9.aarch64.rpm",
+        "sha256": "d3f91fdbe169fe544c24564452f63fe1c6c5fb67bb686146345850223ea1f7ec",
+        "size": 72346
+      },
+      "openssh-9.9p1-13.el9_8.rocky.0.1.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/o/openssh-9.9p1-13.el9_8.rocky.0.1.aarch64.rpm",
+        "sha256": "2a40c8ee2c03b4aa60daa425d2ad62e1a201980dbd03a4e4be9affd51ce71120",
+        "size": 422340
+      },
+      "openssh-server-9.9p1-13.el9_8.rocky.0.1.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/o/openssh-server-9.9p1-13.el9_8.rocky.0.1.aarch64.rpm",
+        "sha256": "c6c32a9bf5ee2b3fcf07c5afe53124305901d0f175fdea5be2fa8b6f1357c692",
+        "size": 533376
+      },
+      "pigz-2.8-1.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/p/pigz-2.8-1.el9.aarch64.rpm",
+        "sha256": "9296b37e97df89aeb9a72d5101a23a8a8681fbd5d6d965b1afe89c0871312647",
+        "size": 89997
+      },
+      "procps-ng-3.3.17-14.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/p/procps-ng-3.3.17-14.el9.aarch64.rpm",
+        "sha256": "28798fa96e18cf0f117452568e54abc1544446399d628173219d5afb810d5ed2",
+        "size": 341282
+      },
+      "psmisc-23.4-3.el9.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/p/psmisc-23.4-3.el9.aarch64.rpm",
+        "sha256": "e12449b4349de38d20c4e65d5bddef5aeea31cd010d4f60cb9d13b0df30dbeb2",
+        "size": 231273
+      },
+      "systemd-252-67.el9_8.6.rocky.0.1.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/s/systemd-252-67.el9_8.6.rocky.0.1.aarch64.rpm",
+        "sha256": "4db51da7819e180a9ef7f5a790a866542aa5c9487ba0cab4a825a3fe2c32523c",
+        "size": 3943074
+      },
+      "systemd-libs-252-67.el9_8.6.rocky.0.1.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/s/systemd-libs-252-67.el9_8.6.rocky.0.1.aarch64.rpm",
+        "sha256": "0cd41d8aef5fb4dc0ef29ede5fd6b8fdd3f7e4fd2f8d3d55aec423d1624b91eb",
+        "size": 618793
+      },
+      "systemd-pam-252-67.el9_8.6.rocky.0.1.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/s/systemd-pam-252-67.el9_8.6.rocky.0.1.aarch64.rpm",
+        "sha256": "02f747b7284bb01e48d7f353d053d3282c652433b53d5baf72ed867733ea98b2",
+        "size": 239671
+      },
+      "systemd-rpm-macros-252-67.el9_8.6.rocky.0.1.noarch.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/s/systemd-rpm-macros-252-67.el9_8.6.rocky.0.1.noarch.rpm",
+        "sha256": "8a2be045005e4317db4c38a1c4e120d7f27f3485682d0d5e945b8a3741017d39",
+        "size": 32654
+      },
+      "systemd-udev-252-67.el9_8.6.rocky.0.1.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/s/systemd-udev-252-67.el9_8.6.rocky.0.1.aarch64.rpm",
+        "sha256": "ee8369fa7a57f0310ae806c9d2208bb017bb98aeb3e07bc9a8022a2da262acde",
+        "size": 1955667
+      },
+      "xz-5.2.5-8.el9_0.aarch64.rpm": {
+        "url": "https://dl.rockylinux.org/vault/rocky/9.8/BaseOS/aarch64/os/Packages/x/xz-5.2.5-8.el9_0.aarch64.rpm",
+        "sha256": "7ad9c5e6425656499395a7da46c15df1e3392b8c2008803fc4da0ace5cc453b3",
+        "size": 219266
+      }
+    }
+  }
+}

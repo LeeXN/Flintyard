@@ -1,0 +1,72 @@
+{
+  "api_version": "flintyard/v1alpha1",
+  "kind": "BuildRecipe",
+  "architecture": "x86_64",
+  "os": {
+    "family": "ubuntu",
+    "release": "24.04"
+  },
+  "rootfs": {
+    "kind": "archive",
+    "source": {
+      "path": "fixtures/ubuntu-rootfs.tar.xz",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "size_mib": 4096
+  },
+  "kernel": {
+    "mode": "prebuilt",
+    "source": {
+      "path": "fixtures/kernel",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "release": "6.8.0-example",
+    "origin": "distribution-binary",
+    "modules": "rootfs"
+  },
+  "boot": {
+    "root_device": "/dev/vda",
+    "kernel_args": [
+      "console=ttyS0",
+      "reboot=k",
+      "panic=1"
+    ]
+  },
+  "steps": [
+    {
+      "argv": [
+        "/bin/sh",
+        "-c",
+        "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y openssh-server iproute2 util-linux systemd systemd-resolved"
+      ],
+      "working_dir": "/",
+      "env": {
+        "DEBIAN_FRONTEND": "noninteractive"
+      },
+      "timeout_seconds": 1800
+    }
+  ],
+  "guest_prepare": {
+    "mode": "seed-v1",
+    "profile": "systemd-networkd",
+    "username": "devops",
+    "probe": {
+      "type": "ssh_banner",
+      "port": 22
+    }
+  },
+  "requires": [
+    "mkfs.ext4",
+    "mount",
+    "umount",
+    "chroot",
+    "xz"
+  ],
+  "network": true,
+  "reproducibility": "best_effort",
+  "output": {
+    "name": "ubuntu-example",
+    "version": "24.04-example",
+    "path": "out/ubuntu-x86_64.fyimg"
+  }
+}

@@ -1,0 +1,7 @@
+/bin/
+/dist/
+/.local/
+/acceptance/
+
+__pycache__/
+*.py[cod]

@@ -1,0 +1,12 @@
+workflow:
+  rules:
+    - if: '$CI_COMMIT_REF_PROTECTED == "true" && ($CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "api")'
+
+container-demo:
+  resource_group: flintyard-demo-host
+  trigger:
+    include:
+      - local: ci/gitlab-demo-jobs.yml
+    strategy: mirror
+  variables:
+    FLINTYARD_DEMO_RUNNER_TAG: flintyard-workload

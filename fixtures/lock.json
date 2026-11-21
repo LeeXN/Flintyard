@@ -1,0 +1,267 @@
+{
+  "api_version": "flintyard.fixtures/v1",
+  "kind": "FixtureInputLock",
+  "locked_at": "2026-11-09",
+  "architectures": [
+    "x86_64",
+    "aarch64"
+  ],
+  "kernel": {
+    "release": "6.1.167",
+    "origin": "upstream-source",
+    "classification": "explicit adapted kernel; not a distribution-original kernel attempt",
+    "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.1.167.tar.xz",
+    "sha256": "2818053c07976ba4ed5f44deb0f5dc7ae7b0975d7918c313d48d8fe7c4e598cb",
+    "checksum_url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/sha256sums.asc",
+    "signature_verified": false,
+    "config_templates": {
+      "x86_64": {
+        "path": "kernels/firecracker-x86_64-6.1.config",
+        "sha256": "153ca1b40f3312bfb40b7587b471ea548a915f98f480f0d0892a1537957a2147"
+      },
+      "aarch64": {
+        "path": "kernels/firecracker-aarch64-6.1.config",
+        "sha256": "5c73202d00b5591ad987d9f808208a318e317fd32dbc17de613c5a93fabe2939"
+      }
+    },
+    "config_source_commit": "95f868c8e345b1cc8faccd1a3c910b4989dc3f58",
+    "config_generation": "explicit native-host normalization and diff before recipe config SHA is locked; product never normalizes silently"
+  },
+  "families": {
+    "ubuntu": {
+      "release": "24.04",
+      "codename": "noble",
+      "profile": "systemd-networkd",
+      "support": {
+        "standard_until": "2029-05",
+        "precision": "month",
+        "source": "https://ubuntu.com/about/release-cycle"
+      },
+      "build": "20261017",
+      "arches": {
+        "x86_64": {
+          "format": "rootfs-tar-xz",
+          "url": "https://cloud-images.ubuntu.com/releases/noble/release-20261017/ubuntu-24.04-server-cloudimg-amd64-root.tar.xz",
+          "sha256": "ec6972af8ea2bd05c55299d204e5ae3f91769b84cfaec7395639d236a39f9a03",
+          "size_bytes": 227213232,
+          "checksum_url": "https://cloud-images.ubuntu.com/releases/noble/release-20261017/SHA256SUMS",
+          "signature_verified": false,
+          "rootfs_sha256": "ec6972af8ea2bd05c55299d204e5ae3f91769b84cfaec7395639d236a39f9a03",
+          "normalization": {
+            "format": "tar-gzip-v1",
+            "drop_devices": [
+              {
+                "path": "dev/console",
+                "major": 5,
+                "minor": 1
+              },
+              {
+                "path": "dev/full",
+                "major": 1,
+                "minor": 7
+              },
+              {
+                "path": "dev/null",
+                "major": 1,
+                "minor": 3
+              },
+              {
+                "path": "dev/ptmx",
+                "major": 5,
+                "minor": 2
+              },
+              {
+                "path": "dev/random",
+                "major": 1,
+                "minor": 8
+              },
+              {
+                "path": "dev/tty",
+                "major": 5,
+                "minor": 0
+              },
+              {
+                "path": "dev/urandom",
+                "major": 1,
+                "minor": 9
+              },
+              {
+                "path": "dev/zero",
+                "major": 1,
+                "minor": 5
+              }
+            ],
+            "sha256": "16c3b2e7f00af4287db4d5fa7ec47825a2c189b35c9e47f2db875ef4f3532107",
+            "reason": "devtmpfs provides these exact devices; archive extraction never creates devices",
+            "tar_sha256": "856bf568920bb67624a97a5deb377c6ceaf4006ca402d2e34f7bc6cc6625aa78"
+          }
+        },
+        "aarch64": {
+          "format": "rootfs-tar-xz",
+          "url": "https://cloud-images.ubuntu.com/releases/noble/release-20261017/ubuntu-24.04-server-cloudimg-arm64-root.tar.xz",
+          "sha256": "b68ef0444ca56ce4f00ae7e8ccfb0c553ffbc92e4a1b14ed7dd8aa18c6d68652",
+          "size_bytes": 216215656,
+          "checksum_url": "https://cloud-images.ubuntu.com/releases/noble/release-20261017/SHA256SUMS",
+          "signature_verified": false,
+          "rootfs_sha256": "b68ef0444ca56ce4f00ae7e8ccfb0c553ffbc92e4a1b14ed7dd8aa18c6d68652",
+          "normalization": {
+            "format": "tar-gzip-v1",
+            "drop_devices": [
+              {
+                "path": "dev/console",
+                "major": 5,
+                "minor": 1
+              },
+              {
+                "path": "dev/full",
+                "major": 1,
+                "minor": 7
+              },
+              {
+                "path": "dev/null",
+                "major": 1,
+                "minor": 3
+              },
+              {
+                "path": "dev/ptmx",
+                "major": 5,
+                "minor": 2
+              },
+              {
+                "path": "dev/random",
+                "major": 1,
+                "minor": 8
+              },
+              {
+                "path": "dev/tty",
+                "major": 5,
+                "minor": 0
+              },
+              {
+                "path": "dev/urandom",
+                "major": 1,
+                "minor": 9
+              },
+              {
+                "path": "dev/zero",
+                "major": 1,
+                "minor": 5
+              }
+            ],
+            "sha256": "396e3fc6233dc4b221754fca2e2ab6afaa5a663fbf2a65cae17b35c6af7705fc",
+            "reason": "devtmpfs provides these exact devices; archive extraction never creates devices",
+            "tar_sha256": "849cbff29009a1b82827e028964a5b4a55c37b8123f0a799fad9f500df652778"
+          }
+        }
+      },
+      "original_kernel_lock_sha256": "0560fcacc48e08d9886e78a86a3df39a4f4fe742d5b65e6d2d527ebaef01f449"
+    },
+    "debian": {
+      "release": "13.7",
+      "codename": "trixie",
+      "profile": "systemd-networkd",
+      "support": {
+        "full_until": "2028-08-09",
+        "lts_until": "2030-06-30",
+        "source": "https://www.debian.org/releases/trixie/"
+      },
+      "build": "20261104",
+      "arches": {
+        "x86_64": {
+          "format": "rootfs-tar-gzip",
+          "url": "https://raw.githubusercontent.com/debuerreotype/docker-debian-artifacts/373f61a386722a989c79f0c11f23fcf379b56e94/trixie/oci/blobs/rootfs.tar.gz",
+          "sha256": "a6dd1c05fbba4f9028078a11f143cbb625d2408921eb8207bfa1dd1ad301276f",
+          "size_bytes": 49412508,
+          "source_commit": "373f61a386722a989c79f0c11f23fcf379b56e94",
+          "checksum_source": "https://docker.debian.net/",
+          "signature_verified": false,
+          "rootfs_sha256": "a6dd1c05fbba4f9028078a11f143cbb625d2408921eb8207bfa1dd1ad301276f",
+          "note": "static single-layer rootfs from Debian image team artifacts; no Docker runtime"
+        },
+        "aarch64": {
+          "format": "rootfs-tar-gzip",
+          "url": "https://raw.githubusercontent.com/debuerreotype/docker-debian-artifacts/3b26c3995c7fae47d95ba678632a3520e97054f7/trixie/oci/blobs/rootfs.tar.gz",
+          "sha256": "23b69c48ce5c2a6fb0681d959fa700427ad2a7cf7e6be5d25249170a1853d7ad",
+          "size_bytes": 49778604,
+          "source_commit": "3b26c3995c7fae47d95ba678632a3520e97054f7",
+          "checksum_source": "https://docker.debian.net/",
+          "signature_verified": false,
+          "rootfs_sha256": "23b69c48ce5c2a6fb0681d959fa700427ad2a7cf7e6be5d25249170a1853d7ad",
+          "note": "static single-layer rootfs from Debian image team artifacts; no Docker runtime"
+        }
+      },
+      "cloud_lock_sha256": "ed0d70edc2ef2386f27fddbd0a2bf28d13ca8090fcfb966083bb9848c2c100e0"
+    },
+    "rocky": {
+      "release": "9.8",
+      "profile": "networkmanager",
+      "support": {
+        "active_until": "2027-05-31",
+        "security_until": "2032-05-31",
+        "source": "https://docs.rockylinux.org/latest/releases/"
+      },
+      "build": "20260525.0",
+      "arches": {
+        "x86_64": {
+          "format": "oci-single-layer-tar-xz",
+          "url": "https://dl.rockylinux.org/vault/rocky/9.8/images/x86_64/Rocky-9-Container-Base-9.8-20260525.0.x86_64.oci.tar.xz",
+          "sha256": "1210df99dcf0ef4d73940244e6d703935175629598b09c0e430da20e76768402",
+          "size_bytes": 86205196,
+          "checksum_url": "https://dl.rockylinux.org/vault/rocky/9.8/images/x86_64/Rocky-9-Container-Base-9.8-20260525.0.x86_64.oci.tar.xz.CHECKSUM",
+          "signature_verified": false,
+          "rootfs_sha256": "99c753a880cc03bbe9da8bf6e354c8ba2d99f19058e87b8a55b6487ffcf52f8a",
+          "rootfs_diff_id": "f9961ae81d19825991159d47b3a28485d997cdb7a92f9845caeb507bcc3b67f8",
+          "note": "data-only one-layer OCI normalization; no container service"
+        },
+        "aarch64": {
+          "format": "oci-single-layer-tar-xz",
+          "url": "https://dl.rockylinux.org/vault/rocky/9.8/images/aarch64/Rocky-9-Container-Base-9.8-20260525.0.aarch64.oci.tar.xz",
+          "sha256": "254dc06377bb63a5ab390cea33c2f26d71c4e0ff6ae1bc8a0fb0fbb86d992e89",
+          "size_bytes": 84701720,
+          "checksum_url": "https://dl.rockylinux.org/vault/rocky/9.8/images/aarch64/Rocky-9-Container-Base-9.8-20260525.0.aarch64.oci.tar.xz.CHECKSUM",
+          "signature_verified": false,
+          "rootfs_sha256": "626df70c5150fb1b4258773332ddc10a35361e4105674585cdf46ba123757eaf",
+          "rootfs_diff_id": "1419521e6b018bfaa27425d52efc2d842e07a1eacf2765a1eb453b4bce9a1906",
+          "note": "data-only one-layer OCI normalization; no container service"
+        }
+      },
+      "original_kernel_lock_sha256": "c053cc74e9dcdc1e3a4ccc7c3a1125fbcea18f3b8dd84ecca1b6bf064ee6492c",
+      "offline_package_lock_sha256": "c853f185436501efb3c0b5a0cc5bf287c37f38d4e7781c1f4e512d069097531d"
+    },
+    "alpine": {
+      "release": "3.22.8",
+      "profile": "openrc-ifupdown",
+      "support": {
+        "main_until": "2027-05-01",
+        "source": "https://www.alpinelinux.org/releases/"
+      },
+      "build": "3.22.8",
+      "arches": {
+        "x86_64": {
+          "format": "rootfs-tar-gzip",
+          "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-minirootfs-3.22.8-x86_64.tar.gz",
+          "sha256": "2d7f46af9b7e86ad64ebeba3fe9b75b62dd5b259e708afb2ab21268f627696e5",
+          "size_bytes": 3647469,
+          "checksum_url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-minirootfs-3.22.8-x86_64.tar.gz.sha256",
+          "signature_verified": false,
+          "rootfs_sha256": "2d7f46af9b7e86ad64ebeba3fe9b75b62dd5b259e708afb2ab21268f627696e5",
+          "offline_rootfs_sha256": "2454b3141e96d87d821d60de0b718b8810273a172548e2112183743e6a5e3613",
+          "offline_rootfs_tar_sha256": "a552e7358ab8ab8cadb3cc25cfb0cbd6cae44edd761987cd46bfa03ae2285aa0"
+        },
+        "aarch64": {
+          "format": "rootfs-tar-gzip",
+          "url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/aarch64/alpine-minirootfs-3.22.8-aarch64.tar.gz",
+          "sha256": "36091efacd083c1cf5a8c837272530bff4fc72db1fbfdef559f52de0d890bca4",
+          "size_bytes": 3971704,
+          "checksum_url": "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/aarch64/alpine-minirootfs-3.22.8-aarch64.tar.gz.sha256",
+          "signature_verified": false,
+          "rootfs_sha256": "36091efacd083c1cf5a8c837272530bff4fc72db1fbfdef559f52de0d890bca4",
+          "offline_rootfs_sha256": "be60fd1c6855f10f5cf1a1ba592efbf2439f23b2996ad1e15ba9f1da3d2b3bd4",
+          "offline_rootfs_tar_sha256": "f4a7060aba39f59faa6d7b664269658112cd1787da2c46eafc613cd728404c17"
+        }
+      },
+      "offline_package_lock_sha256": "c2867825762930045ab90ed142a255dd7d28dc9c7efdb8e4614f12eebf5f159c"
+    }
+  },
+  "runtime_acceptance": "not_run; input verification is not boot/access acceptance"
+}

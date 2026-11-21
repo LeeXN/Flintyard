@@ -1,0 +1,51 @@
+stages: [image, vm, deploy, verify, cleanup]
+
+default:
+  tags: ["$FLINTYARD_DEMO_RUNNER_TAG"]
+  interruptible: false
+  artifacts:
+    when: always
+    paths: [workload-stage.log]
+    expire_in: 7 days
+
+.demo-stage:
+  dependencies: []
+  script:
+    - set -euo pipefail
+    - /usr/bin/sudo -n /opt/flintyard-demo/run-stage "$DEMO_STAGE" "$CI_PIPELINE_ID" |& tee workload-stage.log
+
+build-image:
+  extends: .demo-stage
+  stage: image
+  timeout: 45 minutes
+  variables:
+    DEMO_STAGE: build
+
+start-vms:
+  extends: .demo-stage
+  stage: vm
+  timeout: 20 minutes
+  variables:
+    DEMO_STAGE: start
+
+deploy-gitea:
+  extends: .demo-stage
+  stage: deploy
+  timeout: 25 minutes
+  variables:
+    DEMO_STAGE: deploy
+
+verify-gitea:
+  extends: .demo-stage
+  stage: verify
+  timeout: 5 minutes
+  variables:
+    DEMO_STAGE: verify
+
+destroy-vms:
+  extends: .demo-stage
+  stage: cleanup
+  when: always
+  timeout: 5 minutes
+  variables:
+    DEMO_STAGE: cleanup

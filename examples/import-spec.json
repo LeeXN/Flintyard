@@ -1,0 +1,48 @@
+{
+  "api_version": "flintyard/v1alpha1",
+  "kind": "ImageImport",
+  "name": "ubuntu-example",
+  "version": "24.04-example",
+  "architecture": "x86_64",
+  "os": {
+    "family": "ubuntu",
+    "release": "24.04"
+  },
+  "boot": {
+    "kernel_path": "payload/kernel",
+    "rootfs_path": "payload/rootfs.raw",
+    "root_device": "/dev/vda",
+    "kernel_args": [
+      "console=ttyS0",
+      "reboot=k",
+      "panic=1"
+    ]
+  },
+  "kernel": {
+    "release": "6.8.0-example",
+    "origin": "distribution-binary",
+    "modules": "embedded",
+    "config_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "initialization": {
+    "mode": "seed-v1",
+    "profile": "systemd-networkd",
+    "username": "devops",
+    "probe": {
+      "type": "ssh_banner",
+      "port": 22
+    }
+  },
+  "inputs": [
+    {
+      "role": "kernel",
+      "path": "fixtures/kernel",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "role": "rootfs",
+      "path": "fixtures/rootfs.raw",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ]
+}
