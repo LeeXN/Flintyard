@@ -1,8 +1,10 @@
 # Networking
 
-[简体中文](networking.zh-CN.md)
+[简体中文](networking.zh-CN.md) · [Node configuration](usage.md#configure-node-resources-and-networking)
 
-Each environment has its own private IPv4 network. The Flintyard host can connect directly to the assigned guest IPs. Nodes in the same environment can communicate over their private bridge. Set `network.nat` to `false` for a private network without outbound NAT.
+Each environment has its own private IPv4 network. Once guest networking is configured, the host can reach guest IPs directly and nodes can reach each other over their private bridge. Keep `network.nat: false` and `dns: []` when you only need host SSH or communication between nodes.
+
+Set these fields in the environment JSON before the first `up`. To change an existing environment's networking, test under a new name or back up its data, destroy it, and create it again. [Stop and destroy](usage.md#stop-resume-and-destroy)
 
 ## Address assignment
 
@@ -17,7 +19,9 @@ sysctl net.ipv4.ip_forward
 ip -4 route show default
 ```
 
-When needed, set `network.egress_interface` to a specific host interface. Use `network.dns` to pass IPv4 DNS servers that guests can reach. Choose actual resolvers for your network. A host-local loopback resolver belongs to the host's own namespace.
+`net.ipv4.ip_forward` should be `1`. This is a host-wide setting. If authorized, enable it for the current boot with `sudo sysctl -w net.ipv4.ip_forward=1`. Manage persistence through the host's network policy. Flintyard leaves the setting to the host operator.
+
+Use the route output to identify the host egress. Set `network.egress_interface` when a single default egress cannot be inferred. Use `network.dns` to pass IPv4 resolvers that guests can reach. A host-local loopback resolver belongs to the host's own namespace.
 
 ## Expose a guest port
 
@@ -37,9 +41,16 @@ Declare the exact host address and port, transport protocol, node name, and gues
 }
 ```
 
-Merge the fragment into the environment JSON. Use a specific non-loopback IPv4 address assigned to the host for access from other machines. Non-loopback forwarding requires IPv4 forwarding and compatible routes, host firewall rules, and upstream ACLs. Verify it from the intended client.
+Merge the fragment into the environment JSON and start the environment. Start a service on port `3000` inside `node-1`. For an HTTP service, test it from the host with `curl --fail http://127.0.0.1:13030/`. A loopback-only mapping can use `nat: false`.
 
-Mappings are enforced by owned nftables rules. Flintyard checks for existing listeners and conflicting reservations before setup. Keep the host port unallocated by other services during the environment's lifetime. `status -o json` reports assigned endpoints and known firewall diagnostics.
+Use a specific non-loopback IPv4 address assigned to the host for access from other machines. Non-loopback forwarding requires IPv4 forwarding and compatible routes, host firewall rules, and upstream ACLs. Verify it from the intended client.
+
+Mappings are enforced by owned nftables rules. Flintyard checks for existing listeners and conflicting reservations before setup. Keep the port unallocated by other services during the environment's lifetime. Read the tutorial environment's mappings and diagnostics as follows. Replace `debian-demo` if you used another name.
+
+```sh
+sudo /opt/flintyard/bin/flintyard status --state-dir /var/lib/flintyard-tutorial \
+  -o json debian-demo | jq '.data.network'
+```
 
 ## Troubleshooting
 

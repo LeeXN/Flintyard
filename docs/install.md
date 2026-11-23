@@ -1,59 +1,37 @@
-# Installation
+# Host setup and installation
 
-[简体中文](install.zh-CN.md)
-
-Flintyard needs a Linux host with working KVM. Use the same architecture for the host, Firecracker, jailer, and guest image. [Host and image compatibility](compatibility.md)
+[简体中文](install.zh-CN.md) · [Complete build-to-SSH walkthrough](usage.md#single-node-quickstart)
 
 ## Host prerequisites
 
-- Hardware virtualization exposed through `/dev/kvm`. For a virtualized Linux host, enable nested virtualization in the outer hypervisor.
-- 4 KiB kernel pages and a usable memory cgroup controller. Run `getconf PAGESIZE` and `flintyard doctor` to check the selected host.
-- Root access to provision networking, disks, and jailer. A host whose firewall or forwarding policy blocks VM traffic may require explicit configuration. [Networking](networking.md)
-- `ip`, `nft`, and `mkfs.ext4` for VM operations. On Debian or Ubuntu these are available in `iproute2`, `nftables`, and `e2fsprogs`.
-- `mount`, `umount`, `chroot`, and `unshare` for building images. Source-kernel recipes also need a compiler, linker, `make`, and the dependencies of the pinned kernel configuration.
-- Go 1.27.3 and `make` to compile Flintyard. The Debian image preparation and quickstart use Python 3, `jq`, `curl`, `sfdisk`, `debugfs`, and the OpenSSH client. [Go downloads](https://go.dev/dl/)
+| Task | Requirements |
+| --- | --- |
+| Compile Flintyard | Go 1.27.3 or a compatible newer toolchain. Use `go build` for one CLI binary. `make build` uses `make` and produces Linux amd64 and arm64 binaries. |
+| Prepare Debian inputs | Python 3.9+, `curl`, `jq`, `sfdisk`, `debugfs`, and xz archive support. See the [quickstart](usage.md#1-prepare-the-host-and-build-flintyard) for package installation commands. |
+| Build images | Matching-architecture Linux, root, `mkfs.ext4`, `mount`, `umount`, `chroot`, `unshare`, and any tools declared by the recipe. Image builds do not require KVM. |
+| Boot or validate guests | `x86_64` or `aarch64` Linux, root, `/dev/kvm`, TAP support through `/dev/net/tun`, 4 KiB host pages, a memory cgroup controller, `ip`, `nft`, and `mkfs.ext4`. Firecracker, jailer, and the image must match the host architecture. |
+| Log in over SSH | An OpenSSH client, the matching private key, and a running guest SSH service reachable from the client. |
 
-Allow enough space for the image build scratch directory, immutable cache, and an independent writable root disk for each node. On the KVM host, choose a private state directory under a trusted ancestor such as `/var/lib`. The default state root is `/var/lib/flintyard`.
+A virtualized host needs nested KVM exposed by its hypervisor. Plan for downloads, build scratch space, the expanded image cache, and a separate writable disk for each node. [Compatibility and validation coverage](compatibility.md)
 
 ## Build from source
 
-Run the commands from the repository root. Keep the same shell for the installation and quickstart.
-
-```sh
-go version
-make build
-
-ARCH=$(uname -m)
-case "$ARCH" in
-  x86_64) GO_ARCH=amd64 ;;
-  aarch64) GO_ARCH=arm64 ;;
-  *) printf 'Unsupported architecture: %s\n' "$ARCH" >&2; exit 1 ;;
-esac
-FY="$(pwd -P)/bin/flintyard-linux-$GO_ARCH"
-"$FY" version
-```
+Build for the current host from the repository root and install to `/opt/flintyard/bin/flintyard`. For distribution, `make build` produces `bin/flintyard-linux-amd64` and `bin/flintyard-linux-arm64`. `make package` produces tarballs and checksums in `dist/`. [Build and install commands](usage.md#1-prepare-the-host-and-build-flintyard)
 
 ## Install the pinned Firecracker and jailer
 
-Use both binaries from the same official archive and verify its checksum. Extract them to a location where root can access and execute them. [Compatibility lock](../compatibility.lock.json)
+Use the official archive for the architecture and version in the [compatibility lock](../compatibility.lock.json). Verify the archive checksum, then install both binaries to `/opt/flintyard/bin/`. When running as root, the binaries and their ancestors must be controlled by root and protected from replacement by ordinary users. [Download, verify, and install](usage.md#2-install-matching-firecracker-and-jailer-binaries)
+
+## Choose the state directory and check the host
+
+The default state directory is `/var/lib/flintyard`. The walkthrough uses `/var/lib/flintyard-tutorial`. When using a larger disk, choose its `--state-dir` from the beginning and use the same path for every operation on the environment. Use a real path under trusted ancestors, with no symlinks or parent directories writable by ordinary users. Keep the state directory at mode `0700`.
 
 ```sh
-FC_VERSION="$(jq -er .firecracker.version compatibility.lock.json)"
-TOOLS="$(pwd -P)/bin/firecracker-$FC_VERSION-$ARCH"
-ARCHIVE="$TOOLS/firecracker.tgz"
-mkdir -p "$TOOLS"
-curl --fail --location --output "$ARCHIVE" \
-  "$(jq -er --arg arch "$ARCH" '.firecracker.assets[$arch].url' compatibility.lock.json)" &&
-printf '%s  %s\n' \
-  "$(jq -er --arg arch "$ARCH" '.firecracker.assets[$arch].sha256' compatibility.lock.json)" \
-  "$ARCHIVE" | sha256sum -c &&
-tar -xzf "$ARCHIVE" --no-same-owner -C "$TOOLS"
-
-FIRECRACKER="$TOOLS/release-v$FC_VERSION-$ARCH/firecracker-v$FC_VERSION-$ARCH"
-JAILER="$TOOLS/release-v$FC_VERSION-$ARCH/jailer-v$FC_VERSION-$ARCH"
-sudo "$FY" doctor --mode run --firecracker "$FIRECRACKER" --jailer "$JAILER"
+sudo /opt/flintyard/bin/flintyard doctor --mode run \
+  --firecracker /opt/flintyard/bin/firecracker --jailer /opt/flintyard/bin/jailer
+sudo /opt/flintyard/bin/flintyard doctor --mode build
 ```
 
-Use `doctor --mode build` for an image-building host and `doctor --mode validate` to check the dependencies for temporary image validation. The default report lists each check and its outcome. Use `-o json` for CI. `--uid-range` reserves the numeric UID/GID allocation range for jailed VMMs. Use the same range on subsequent `up` operations if you choose a nondefault range.
+Use `--mode validate` in place of `--mode run` when checking for temporary image validation. Inspect any failed checks before proceeding. Use `-o json` in scripts. Pass the same nondefault `--uid-range` to `doctor`, `up`, and `image validate`.
 
-Continue with the [single-node quickstart](usage.md#single-node-quickstart).
+Next, [build or prepare an image](usage.md#3-build-the-debian-image-or-prepare-an-existing-image).

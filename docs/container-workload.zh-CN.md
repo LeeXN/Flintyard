@@ -6,17 +6,23 @@
 
 ## 在本机运行
 
-完成安装后，按 Debian 指南准备 `DEBIAN_INPUTS`。宿主需要 `git`，并应按网络策略启用 IPv4 转发。将 `GUEST_DNS` 设为客户机可访问的 IPv4 DNS 服务器，允许客户机访问 Debian 软件包仓库、GitHub 下载及 Docker Hub。为两台虚机预留至少 3,328 MiB 可用内存，并为镜像和磁盘预留空间。 [安装](install.zh-CN.md) · [准备 Debian 输入](../fixtures/README.md#debian-原版内核离线镜像) · [网络](networking.zh-CN.md)
+先完成主教程的二进制安装和 Debian 下载与提取。此处使用 `/opt/flintyard/bin/` 的三个二进制和 `.local/quickstart/debian-inputs/`，无需先构建 `.fyimg`。从仓库根目录执行。宿主需安装 `git`，并按网络策略启用 IPv4 转发。运行时输入客户机可达的 IPv4 DNS 地址，允许客户机访问 Debian 软件包仓库、GitHub 下载及 Docker Hub。为两台虚机预留至少 3,328 MiB 可用内存，并为镜像和磁盘预留空间。 [二进制安装](usage.zh-CN.md#1-准备宿主并构建二进制) · [准备 Debian 输入](../fixtures/README.md#debian-原版内核离线镜像) · [网络](networking.zh-CN.md)
 
 ```sh
-STATE_PARENT="${STATE_PARENT:-/var/lib}"
-REPORT_DIRECTORY="$(sudo mktemp -d "$STATE_PARENT/flintyard-workload.XXXXXXXX")"
-: "${GUEST_DNS:?set a DNS server reachable from the guests}" "${DEBIAN_INPUTS:?prepare Debian inputs}"
-sudo bash tests/container-workload.sh \
-  "$FY" "$FIRECRACKER" "$JAILER" "$DEBIAN_INPUTS" "$REPORT_DIRECTORY" "$GUEST_DNS"
+(
+  set -eu
+  printf 'Guest-reachable IPv4 DNS: '
+  IFS= read -r guest_dns
+  test -n "$guest_dns"
+  test -f .local/quickstart/debian-inputs/provenance.json
+  report_dir=$(sudo mktemp -d /var/lib/flintyard-workload.XXXXXXXX)
+  sudo bash tests/container-workload.sh /opt/flintyard/bin/flintyard \
+    /opt/flintyard/bin/firecracker /opt/flintyard/bin/jailer \
+    .local/quickstart/debian-inputs "$report_dir" "$guest_dns"
+)
 ```
 
-脚本会输出报告目录。若 `/var/lib` 空间不足，将 `STATE_PARENT` 设为容量足够且由 root 管理的已有目录。Docker 和 K3s 的宿主端口分别为 13030 和 13031。可通过 `sudo` 显式传入 `FY_DEMO_DOCKER_PORT` 和 `FY_DEMO_K3S_PORT` 更换端口。通过 `sudo` 传入 `FY_DEMO_HOLD_SECONDS=120` 可在验证成功后保留一段访问时间，此时可从两个映射端口访问 `/flintyard/container-demo`。
+脚本会输出报告目录。若 `/var/lib` 空间不足，把 `mktemp` 命令的目录改成容量足够、由 root 管理的已有路径。Docker 和 K3s 的宿主端口分别为 13030 和 13031。可在 `sudo` 后显式传入 `FY_DEMO_DOCKER_PORT` 和 `FY_DEMO_K3S_PORT`，例如 `sudo FY_DEMO_DOCKER_PORT=13130 FY_DEMO_K3S_PORT=13131 bash …`。通过 `sudo FY_DEMO_HOLD_SECONDS=120 bash …` 可在验证成功后保留一段访问时间，此时可从两个映射端口访问 `/flintyard/container-demo`。
 
 CI 通过 SSH 连接客户机，并使用镜像中配置的临时 `devops` 用户安装容器平台。 [Gitea 容器配置](https://docs.gitea.com/installation/install-with-docker/)
 
@@ -36,22 +42,28 @@ CI 通过 SSH 连接客户机，并使用镜像中配置的临时 `devops` 用�
 
 使用支持 `strategy: mirror` 的 GitLab 18.2 或更新版本。将项目的 CI 配置文件设为 `ci/gitlab-demo.yml`，在 KVM 宿主上注册一台专用于项目可信代码的受保护 Shell Runner，标签设为 `flintyard-workload`。五个作业使用同一台机器。 [GitLab 流水线设置](https://docs.gitlab.com/ci/pipelines/settings/) · [下游流水线](https://docs.gitlab.com/ci/pipelines/downstream_pipelines/)
 
-在 Runner 宿主上安装已审查的脚本、运行二进制及准备好的输入。按上文设置 `GUEST_DNS`。
+在 Runner 宿主上准备主教程的二进制和 Debian 输入，在仓库根目录运行以下命令。输入这个 Runner 上的客户机可达的 IPv4 DNS 服务器。
 
 ```sh
-DEMO_INSTALL=/opt/flintyard-demo
-DEMO_DATA=/var/lib/flintyard-demo
-sudo install -d -m 0755 "$DEMO_INSTALL/bin" "$DEMO_INSTALL/tests" "$DEMO_INSTALL/fixtures"
-sudo install -d -m 0700 "$DEMO_DATA" "$DEMO_DATA/inputs"
-sudo install -m 0755 "$FY" "$DEMO_INSTALL/bin/flintyard"
-sudo install -m 0755 "$FIRECRACKER" "$DEMO_INSTALL/bin/firecracker"
-sudo install -m 0755 "$JAILER" "$DEMO_INSTALL/bin/jailer"
-sudo install -m 0755 ci/gitlab-demo-run-stage.sh "$DEMO_INSTALL/run-stage"
-sudo install -m 0644 tests/container-workload.sh tests/container-workload-guest.sh "$DEMO_INSTALL/tests/"
-sudo install -m 0644 fixtures/render-debian-cloud.py fixtures/prepare.py fixtures/render.py \
-  fixtures/debian-cloud.lock.json fixtures/lock.json "$DEMO_INSTALL/fixtures/"
-sudo cp -R -- "$DEBIAN_INPUTS"/. "$DEMO_DATA/inputs/"
-printf '%s\n' "$GUEST_DNS" | sudo tee "$DEMO_INSTALL/dns-ipv4" >/dev/null
+(
+  set -eu
+  printf 'Guest-reachable IPv4 DNS: '
+  IFS= read -r guest_dns
+  test -n "$guest_dns"
+  test -f .local/quickstart/debian-inputs/provenance.json
+  install_dir=/opt/flintyard-demo
+  data_dir=/var/lib/flintyard-demo
+  sudo install -d -m 0755 "$install_dir/bin" "$install_dir/tests" "$install_dir/fixtures"
+  sudo install -d -m 0700 "$data_dir" "$data_dir/inputs"
+  sudo install -m 0755 /opt/flintyard/bin/flintyard /opt/flintyard/bin/firecracker \
+    /opt/flintyard/bin/jailer "$install_dir/bin/"
+  sudo install -m 0755 ci/gitlab-demo-run-stage.sh "$install_dir/run-stage"
+  sudo install -m 0644 tests/container-workload.sh tests/container-workload-guest.sh "$install_dir/tests/"
+  sudo install -m 0644 fixtures/render-debian-cloud.py fixtures/prepare.py fixtures/render.py \
+    fixtures/debian-cloud.lock.json fixtures/lock.json "$install_dir/fixtures/"
+  sudo cp -R -- .local/quickstart/debian-inputs/. "$data_dir/inputs/"
+  printf '%s\n' "$guest_dns" | sudo tee "$install_dir/dns-ipv4" >/dev/null
+)
 ```
 
 用 `visudo` 授权 Runner 账号免密执行已安装的 `/opt/flintyard-demo/run-stage`。以 `gitlab-runner` 账号为例。
@@ -62,10 +74,15 @@ gitlab-runner ALL=(root) NOPASSWD: /opt/flintyard-demo/run-stage
 
 各作业的 `workload-stage.log` 可从 GitLab 下载。镜像、状态和诊断文件位于 Runner 上由 root 管理的 `/var/lib/flintyard-demo/ci-runs/workload.<child-pipeline-id>`。脚本在清理时删除临时 SSH 密钥。构建或部署失败后，可启动一条新的流水线。
 
-如果流水线在两个作业之间被取消，或 Runner 离线，可在流水线停止后进行清理。将 `CHILD_PIPELINE_ID` 设为子流水线 URL（`/-/pipelines/<id>`）中的数字 ID，再在 Runner 宿主上运行以下命令。如果 Flintyard 报告清理不完整，检查报告目录，按 [资源回收](usage.zh-CN.md#回收残留资源) 处理。
+如果流水线在两个作业之间被取消，或 Runner 离线，可在流水线停止后在 Runner 宿主上进行清理。命令提示时输入子流水线 URL（`/-/pipelines/<id>`）中的数字 ID。如果 Flintyard 报告清理不完整，检查报告目录，按 [资源回收](usage.zh-CN.md#回收残留资源) 处理。
 
 ```sh
-sudo /opt/flintyard-demo/run-stage cleanup "$CHILD_PIPELINE_ID"
+(
+  set -eu
+  printf 'Child pipeline ID: '
+  IFS= read -r pipeline_id
+  sudo /opt/flintyard-demo/run-stage cleanup "$pipeline_id"
+)
 ```
 
 ## 核对运行结果
