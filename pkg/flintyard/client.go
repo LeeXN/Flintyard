@@ -42,6 +42,14 @@ func (e *Error) Unwrap() error { return e.Cause }
 func Failure(code, stage string, e error) *Error {
 	return &Error{Code: code, Stage: stage, Message: e.Error(), Cause: e, Details: map[string]any{}}
 }
+
+func stateRootFailure(err error) *Error {
+	if errors.Is(err, context.Canceled) {
+		return Failure("E_CANCELLED", "preflight", err)
+	}
+	return Failure("E_STATE_INVALID", "preflight", err)
+}
+
 func ExitCode(e error) int {
 	var f *Error
 	if errors.As(e, &f) && (f.CleanupIncomplete || f.Code == "E_CLEANUP_INCOMPLETE") {
@@ -60,7 +68,7 @@ func ExitCode(e error) int {
 		return 3
 	case "E_LAUNCH_FAILED", "E_ACCESS_TIMEOUT", "E_API_TIMEOUT":
 		return 5
-	case "E_SPEC_CONFLICT", "E_LOCKED", "E_PROCESS_IDENTITY", "E_NETWORK_CONFLICT", "E_FIREWALL_CONFLICT", "E_PORT_IN_USE":
+	case "E_STATE_INVALID", "E_SPEC_CONFLICT", "E_LOCKED", "E_PROCESS_IDENTITY", "E_NETWORK_CONFLICT", "E_FIREWALL_CONFLICT", "E_PORT_IN_USE":
 		return 6
 	case "E_CLEANUP_INCOMPLETE":
 		return 7

@@ -94,7 +94,7 @@ func (c *Client) GC(ctx context.Context, r GCRequest) (GCResult, error) {
 	}
 	root, err := state.OpenRoot(ctx, c.StateDir, false)
 	if err != nil {
-		return result, Failure("E_SPEC_CONFLICT", "preflight", err)
+		return result, stateRootFailure(err)
 	}
 	if r.Apply {
 		if os.Geteuid() != 0 {

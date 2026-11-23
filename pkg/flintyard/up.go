@@ -191,6 +191,10 @@ func (c *Client) Up(ctx context.Context, r UpRequest) (result EnvironmentResult,
 	if e != nil {
 		return result, e
 	}
+	binaries, layout, e := runPreflight(ctx, r.Firecracker, r.Jailer)
+	if e != nil {
+		return result, e
+	}
 	if input.spec.Network.NAT || len(input.spec.PortForwards) > 0 || input.spec.Network.EgressInterface != "" {
 		connectivity, e := network.PreflightConnectivity(ctx, network.ConnectivityRequest{NAT: input.spec.Network.NAT, EgressInterface: input.spec.Network.EgressInterface, Forwards: input.spec.PortForwards})
 		if e != nil {
@@ -198,13 +202,9 @@ func (c *Client) Up(ctx context.Context, r UpRequest) (result EnvironmentResult,
 		}
 		input.spec.Network.EgressInterface = connectivity.EgressInterface
 	}
-	binaries, layout, e := runPreflight(ctx, r.Firecracker, r.Jailer)
-	if e != nil {
-		return result, e
-	}
 	root, e := state.OpenRoot(ctx, c.StateDir, true)
 	if e != nil {
-		return result, Failure("E_SPEC_CONFLICT", "preflight", e)
+		return result, stateRootFailure(e)
 	}
 	unlock, e := lockEnvironment(ctx, root, input.spec.Name)
 	if e != nil {
@@ -306,15 +306,7 @@ func (c *Client) Up(ctx context.Context, r UpRequest) (result EnvironmentResult,
 		cleanupErr = errors.Join(cleanupErr, saveEnvironment(root, &env))
 		result = resultFromState(env)
 		if cleanupErr != nil {
-			var original *Error
-			if !errors.As(err, &original) {
-				original = Failure("E_LAUNCH_FAILED", "rollback", err)
-			}
-			copy := *original
-			copy.CleanupIncomplete = true
-			copy.Cause = errors.Join(err, cleanupErr)
-			copy.Details = map[string]any{"cleanup_errors": []string{cleanupErr.Error()}}
-			err = &copy
+			err = rollbackFailure(err, cleanupErr)
 		}
 	}()
 	operations := filepath.Join(envDir(root, id), "operations")

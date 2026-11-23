@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 
 	"github.com/LeeXN/Flintyard/internal/host"
@@ -81,15 +82,68 @@ func upInputFixture(t *testing.T) (string, string) {
 }
 func TestUpPreflightFailureHasNoEnvironmentOrRuntimeMutation(t *testing.T) {
 	dir, file := upInputFixture(t)
+	data, err := os.ReadFile(file)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var spec EnvironmentSpec
+	if err = json.Unmarshal(data, &spec); err != nil {
+		t.Fatal(err)
+	}
+	spec.Network.NAT = true
+	data, err = json.Marshal(spec)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = os.WriteFile(file, data, 0600); err != nil {
+		t.Fatal(err)
+	}
+	// With NAT enabled and no ip on PATH, checking connectivity first would
+	// return a network error before the host prerequisite failure.
+	t.Setenv("PATH", dir)
 	root := filepath.Join(dir, "state")
 	c := New(root)
 	// A nonexistent private binary path guarantees refusal even on a KVM host.
-	_, err := c.Up(context.Background(), UpRequest{File: file, Firecracker: filepath.Join(dir, "missing-firecracker"), Jailer: filepath.Join(dir, "missing-jailer")})
+	_, err = c.Up(context.Background(), UpRequest{File: file, Firecracker: filepath.Join(dir, "missing-firecracker"), Jailer: filepath.Join(dir, "missing-jailer")})
 	if err == nil || ExitCode(err) != 3 {
 		t.Fatal(err)
 	}
 	if _, err = os.Stat(root); !os.IsNotExist(err) {
 		t.Fatal("preflight mutated state", err)
+	}
+}
+
+func TestRollbackFailurePreservesOperationDetails(t *testing.T) {
+	cleanupErr := errors.New("failed to save the final state")
+	orig := Failure("E_CANCELLED", "launch", context.Canceled)
+	orig.Node = "node-1"
+	orig.Retryable = true
+	previous := make([]string, 1, 2)
+	previous[0] = "previous cleanup error"
+	orig.Details = map[string]any{"resource": "disk", "cleanup_errors": previous}
+
+	failure := rollbackFailure(orig, cleanupErr)
+	if failure == orig || failure.Code != orig.Code || failure.Stage != orig.Stage ||
+		failure.Message != orig.Message || failure.Node != orig.Node || !failure.Retryable ||
+		!failure.CleanupIncomplete || ExitCode(failure) != 7 ||
+		!errors.Is(failure, context.Canceled) || !errors.Is(failure, cleanupErr) {
+		t.Fatalf("unexpected rollback error: %+v", failure)
+	}
+	details := failure.Details.(map[string]any)
+	if details["resource"] != "disk" ||
+		!slices.Equal(details["cleanup_errors"].([]string), []string{previous[0], cleanupErr.Error()}) {
+		t.Fatalf("lost operation details: %+v", details)
+	}
+	details["resource"] = "changed"
+	if orig.CleanupIncomplete || orig.Details.(map[string]any)["resource"] != "disk" || previous[:2][1] != "" {
+		t.Fatalf("modified the original error: %+v", orig)
+	}
+
+	raw := errors.New("unexpected launch error")
+	failure = rollbackFailure(raw, cleanupErr)
+	if failure.Code != "E_LAUNCH_FAILED" || failure.Stage != "rollback" ||
+		!errors.Is(failure, raw) || !errors.Is(failure, cleanupErr) || ExitCode(failure) != 7 {
+		t.Fatalf("unexpected rollback error for an unclassified operation: %+v", failure)
 	}
 }
 func TestUpCancellationBeforeMutationAndCleanupExitPriority(t *testing.T) {

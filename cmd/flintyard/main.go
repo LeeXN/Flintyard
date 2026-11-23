@@ -32,6 +32,20 @@ type versionResult struct {
 	Firecracker string `json:"firecracker"`
 }
 
+func commandError(err error) *fy.Error {
+	if err == nil {
+		return nil
+	}
+	var failure *fy.Error
+	if errors.As(err, &failure) {
+		return failure
+	}
+	if errors.Is(err, context.Canceled) {
+		return fy.Failure("E_CANCELLED", "operation", err)
+	}
+	return fy.Failure("E_INTERNAL", "operation", err)
+}
+
 func main() {
 	if len(os.Args) == 2 && os.Args[1] == "__build-worker" {
 		ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
@@ -62,7 +76,7 @@ func run(args []string, out, errOut io.Writer) int {
 		args = args[1:]
 	}
 	fs := flag.NewFlagSet(command, flag.ContinueOnError)
-	fs.SetOutput(errOut)
+	fs.SetOutput(io.Discard)
 	format := fs.String("o", "text", "output format: text or json")
 	legacyJSON := fs.Bool("json", false, "alias for -o json")
 	root := fs.String("state-dir", "/var/lib/flintyard", "private state directory")
@@ -131,17 +145,14 @@ func run(args []string, out, errOut io.Writer) int {
 	}
 	pe := fs.Parse(args)
 	if errors.Is(pe, flag.ErrHelp) {
+		fs.SetOutput(errOut)
+		fs.Usage()
 		return 0
 	}
 	jsonOut := *format == "json" || *legacyJSON
 	c := fy.New(*root)
 	emit := func(data any, e error) int {
-		var fe *fy.Error
-		if e != nil {
-			if !errors.As(e, &fe) {
-				fe = fy.Failure("E_IMAGE_INVALID", "operation", e)
-			}
-		}
+		fe := commandError(e)
 		var writeErr error
 		if jsonOut {
 			writeErr = json.NewEncoder(out).Encode(envelope{fy.APIVersion, c.OperationID, e == nil, data, fe})
