@@ -1,60 +1,87 @@
 # Build, import, and validate Linux images
 
-[简体中文](images.zh-CN.md)
+[简体中文](images.zh-CN.md) · [Complete build-to-boot walkthrough](usage.md)
 
-Flintyard's portable `.fyimg` format contains a manifest, a Linux kernel, a raw root disk, and optionally an initrd. The image ID identifies the manifest. The package SHA-256 covers the complete compressed archive. Keep the two values when publishing an image to a trusted artifact store.
+Run the examples from the repository root. They use the CLI installed at `/opt/flintyard/bin/flintyard` and the cache at `/var/lib/flintyard-tutorial`. A cached image ID is valid for environments using that state directory. [Installation steps](usage.md#1-prepare-the-host-and-build-flintyard)
+
+| What you have | Commands | Result |
+| --- | --- | --- |
+| A published `.fyimg` and a trusted package checksum | `image inspect` and `image import PACKAGE` | Inspection result and a local cache entry |
+| A kernel, raw root disk, and optional initrd that already work together | `image import --spec FILE --output PACKAGE` | A new `.fyimg` and a cache entry |
+| Root filesystem inputs that need preparation, disk creation, or a kernel build | `image build --recipe FILE` | A new `.fyimg`, a cache entry, and a build record |
+| An image to boot-check on its target host | `image validate IMAGE` | A temporary boot and access-probe record on that host |
+
+An image ID identifies the manifest and has the form `sha256:…`. The package SHA-256 covers the compressed archive. Preserve both when distributing images and provide the package checksum through an independent trusted channel.
 
 ## Import an existing image
 
-Use `FY` from the installation guide. Set `IMAGE` to the package path and obtain `EXPECTED_SHA256` from a trusted source. [Installation](install.md)
+Place the `.fyimg` at `.local/quickstart/image.fyimg`. Save its publisher's package checksum as a single 64-digit hexadecimal value in `.local/quickstart/image.sha256`. The commands read these files directly and can run in a new shell.
 
 ```sh
-STATE="${STATE:-/var/lib/flintyard}"
-sudo "$FY" image import --state-dir "$STATE" --sha256 "$EXPECTED_SHA256" "$IMAGE"
-sudo "$FY" image inspect "$IMAGE"
+sudo /opt/flintyard/bin/flintyard image inspect .local/quickstart/image.fyimg
+sudo /opt/flintyard/bin/flintyard image import --state-dir /var/lib/flintyard-tutorial \
+  --sha256 "$(cat .local/quickstart/image.sha256)" -o json .local/quickstart/image.fyimg \
+  > .local/quickstart/import.json
+jq -er 'select(.ok) | .data.image_id' .local/quickstart/import.json
 ```
 
-Import verifies manifest and payload integrity and publishes an immutable cache entry. Use the displayed image ID as a node's `image` value. For scripts, add `-o json` and read `data.image_id`. The manifest schema defines the supported architecture, boot arguments, first-boot modes, and payload fields. [Image schema](../schemas/image-v1.schema.json)
+`image inspect` also accepts a cached image ID. Pass the same `--state-dir` used for import when inspecting a cached ID. A node's `image` in `up` accepts the ID or a local package path. The ID keeps the package's location out of your environment configuration. [Configure and boot](usage.md#5-configure-and-boot-the-microvm)
 
 ## Package your own files
 
-Create a local import specification with matching kernel, optional initrd, raw root disk, and payload digests. Choose the root device path the guest kernel expects. Resolve relative input paths from the directory containing the spec. Choose a new path for the output package.
+Prepare a matching bootable kernel, a raw disk containing the guest system, and the matching initrd if needed. Packaging uses the existing disk and does not install a guest initialization adapter.
+
+1. Put `kernel`, `rootfs.raw`, and, if required, `initrd` in `.local/custom-image/inputs/`. Copy the [example import specification](../examples/import-spec.json) to `.local/custom-image/import.json`.
+2. Fill in `name`, `version`, `architecture`, `os`, `kernel.release`, `kernel.origin`, and `kernel.modules` for this image. Use `sha256sum` to compute the actual input checksums. Set every `inputs[].path` relative to the specification, such as `inputs/kernel`. Remove the example `kernel.config_sha256` if you do not have the kernel configuration checksum.
+3. Set `boot.root_device` to the guest's real root device. `boot.kernel_path`, `rootfs_path`, and optional `initrd_path` name `payload/…` entries inside the archive. For an initrd, also include an input with `role: "initrd"` and its actual digest.
+4. Use `seed-v1` if the disk already contains the matching Flintyard guest adapter. Set the actual `profile`, `username`, and probe. Use `external` when the image handles its own access and networking. Omit `initialization.profile` and the environment's `access.public_key` in that case.
+
+After editing the specification, package and import the image. The output path must be new.
 
 ```sh
-sudo "$FY" image import --state-dir "${STATE:-/var/lib/flintyard}" --spec ./import.json --output ./custom.fyimg
+sudo /opt/flintyard/bin/flintyard image import --state-dir /var/lib/flintyard-tutorial \
+  --spec .local/custom-image/import.json --output .local/custom-image/custom.fyimg -o json
 ```
 
-Use the [import specification](../examples/import-spec.json) as a starting point. Calculate actual digests with `sha256sum`. An image with `external` initialization must handle networking and access itself. Use `seed-v1` when the image contains the matching first-boot adapter.
+[Import schema](../schemas/import-v1.schema.json) · [Image manifest schema](../schemas/image-v1.schema.json)
 
 ## Build a reusable image
 
-Set `RECIPE` to the JSON recipe path. Build on a Linux host matching the image architecture. For a ready-to-use recipe, prepare the Debian cloud image first. [Debian cloud image](../fixtures/README.en.md#debian-stock-kernel-offline-image)
+For a first build, use the [offline Debian recipe](usage.md#3-build-the-debian-image-or-prepare-an-existing-image). To customize it, start with the [prebuilt-kernel example](../examples/build-prebuilt.json) or [kernel source example](../examples/build-kernel-source.json). Save the edited recipe as `.local/custom-image/build.recipe.json`.
+
+| Recipe fields | How to set them |
+| --- | --- |
+| `rootfs` | `kind: "raw"` preserves the input disk size. `kind: "archive"` requires `size_mib` to create an ext4 disk. |
+| `kernel` | `mode: "prebuilt"` uses an existing kernel and matching modules in the root filesystem. `mode: "source"` locks source, configuration, and ordered patches and uses the native toolchain. Flintyard records the actual release and build details. |
+| `boot` and `initrd` | Set the root device and kernel arguments. Supply an initrd or declare one generated by a build step with `generated_initrd_path`. The default transport is virtio MMIO. Select `boot.virtio_transport: "pci"` when the kernel and initrd support it. |
+| `steps`, `requires`, and `guest_prepare` | Steps run as root inside the build root. Review the recipe and its inputs before running it. Declare extra host tools in `requires` and choose the guest adapter and probe for the image's init system. |
+| Inputs and output | Specify relative input paths, absolute paths, or HTTPS URLs with locked digests. Set `output.path` to a new file. Relative input and output paths are resolved against the recipe directory. |
+
+The following command is for prepared inputs and steps that need no networking. `--offline` disables build networking. When a recipe needs to download locked inputs or run network-dependent steps, enable its `network` setting and omit `--offline`. The prebuilt-kernel example contains an online `apt-get` step.
 
 ```sh
-sudo "$FY" doctor --mode build
-sudo "$FY" image build --state-dir "${STATE:-/var/lib/flintyard}" --offline --recipe "$RECIPE" --timeout 20m
+sudo /opt/flintyard/bin/flintyard doctor --mode build
+sudo /opt/flintyard/bin/flintyard image build --state-dir /var/lib/flintyard-tutorial \
+  --recipe .local/custom-image/build.recipe.json --offline --timeout 20m -o json \
+  > .local/custom-image/build.json
 ```
 
-The build uses a local raw root disk or a root filesystem archive. An archive recipe specifies the ext4 disk size. A raw root disk retains its source size, so prepare a filesystem with enough space for the intended guest workload. Steps declared by a recipe run with root privileges inside the build root. Review the recipe and its source artifacts before running a build.
-
-- **Prebuilt kernel**. Pin a kernel binary and provide the matching modules in the root filesystem. The [prebuilt recipe](../examples/build-prebuilt.json) shows the fields.
-- **Kernel source**. Pin the source archive, configuration, and ordered patches by digest. The pinned Linux recipe uses `make`, `gcc`, `ld`, `flex`, `bison`, `bc`, and `xz`. Flintyard checks that the supplied configuration stays intact and records compiler details and the resulting kernel release. [Source recipe](../examples/build-kernel-source.json)
-- **Initrd and transport**. Supply a matching initrd or generate it explicitly in the build steps using `generated_initrd_path`. Virtio MMIO is the default. Set `boot.virtio_transport` to `pci` for a kernel and initrd with compatible PCI drivers.
-
-Use `--offline` with prepared local inputs or a complete input cache. Ordinary builds can fetch pinned HTTPS inputs. Use a trusted publisher for the inputs and check their integrity against the lock. [Recipe schema](../schemas/recipe-v1.schema.json) · [Distribution image recipes](../fixtures/README.en.md)
+Read `data.image_id`, `data.package_sha256`, and `data.log_path` in `build.json`. `data.cache_hit` reports a reused build. Kernel source builds also need tools such as `make`, `gcc`, `ld`, `flex`, `bison`, `bc`, and `xz`. [Recipe schema](../schemas/recipe-v1.schema.json) · [Distribution recipes](../fixtures/README.en.md)
 
 ## Test boot and access
 
-`image inspect` checks the package statically. `image validate` creates a temporary microVM, runs the declared TCP or SSH banner probe, saves a host-specific validation record, and cleans up.
+`image validate` boots a temporary guest, runs the image's declared TCP or SSH banner probe, saves a record, and cleans up. An image with `probe.type: "none"` can be inspected statically but cannot run that access validation. This example generates a temporary key for the tutorial image. You can pass another package path or a cached image ID from the same state directory.
 
 ```sh
-VALIDATE_WORK="$(mktemp -d)"
-ssh-keygen -q -t ed25519 -N '' -f "$VALIDATE_WORK/id_ed25519"
-sudo "$FY" image validate --state-dir "${STATE:-/var/lib/flintyard}" --timeout 5m \
-  --firecracker "$FIRECRACKER" --jailer "$JAILER" \
-  --public-key "$VALIDATE_WORK/id_ed25519.pub" "$IMAGE"
-rm -- "$VALIDATE_WORK/id_ed25519" "$VALIDATE_WORK/id_ed25519.pub"
-rmdir -- "$VALIDATE_WORK"
+(
+  set -eu
+  tmp=$(mktemp -d)
+  trap 'rm -f -- "$tmp/id_ed25519" "$tmp/id_ed25519.pub"; rmdir -- "$tmp"' EXIT
+  ssh-keygen -q -t ed25519 -N '' -f "$tmp/id_ed25519"
+  sudo /opt/flintyard/bin/flintyard image validate --state-dir /var/lib/flintyard-tutorial \
+    --timeout 5m --firecracker /opt/flintyard/bin/firecracker --jailer /opt/flintyard/bin/jailer \
+    --public-key "$tmp/id_ed25519.pub" -o json .local/quickstart/image.fyimg
+)
 ```
 
-The example uses `FIRECRACKER` and `JAILER` from installation and generates a temporary SSH key for a `seed-v1` image. For `external` initialization, omit `--public-key` and configure access through the image. A successful SSH banner confirms that the SSH protocol is reachable. Use an SSH client for an authenticated login. Pass `--keep-failed` and inspect the resulting environment when debugging a failed boot. [Runtime and SSH examples](usage.md)
+`seed-v1` validation needs a public key. For `external`, omit `--public-key`. Check `data.static_passed`, `boot_passed`, `access_passed`, `cleanup_incomplete`, and `record_path`. A successful banner confirms service reachability. Use an SSH client to test authentication. `--keep-failed` can retain a failed validation environment. Use its reported `environment_name` with `down` after debugging. [Lifecycle walkthrough](usage.md)

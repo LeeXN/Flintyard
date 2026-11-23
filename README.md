@@ -1,6 +1,6 @@
 # Flintyard
 
-[English](README.en.md) · [安装](docs/install.zh-CN.md) · [使用指南](docs/usage.zh-CN.md) · [CLI 参考](docs/cli.zh-CN.md)
+[English](README.en.md) · [全生命周期教程](docs/usage.zh-CN.md) · [CLI 参考](docs/cli.zh-CN.md)
 
 Flintyard 是面向开发机和自托管 CI 的本地 Firecracker 命令行工具。它从 Linux 镜像启动一个或多个微虚机，为每个节点分配独立的可写盘和 IPv4 地址，并在任务结束后清理环境。
 
@@ -18,9 +18,7 @@ Flintyard 是面向开发机和自托管 CI 的本地 Firecracker 命令行工�
 
 ## 快速开始
 
-1. 在 Linux KVM 宿主上编译 CLI，安装 Firecracker 和 jailer，并运行 `doctor`。 [安装指南](docs/install.zh-CN.md)
-2. 使用与宿主同架构的 `.fyimg`，或构建一份 Debian 镜像。 [构建 Debian 镜像](fixtures/README.md#debian-原版内核离线镜像)
-3. 导入镜像，启动一个节点，通过 SSH 登录，结束后销毁环境。 [单节点快速开始](docs/usage.zh-CN.md#单节点快速开始)
+按一页教程完成 **构建二进制 → 安装运行工具 → 制作或导入镜像 → 配置虚机 → 启动和 SSH → 停机恢复与销毁**。命令从同一个仓库根目录运行，换终端时只需回到该目录。 [从源码到运行第一台微虚机](docs/usage.zh-CN.md#单节点快速开始)
 
 ## 在 CI 中运行容器应用
 
@@ -30,9 +28,9 @@ GitLab 示例使用 Flintyard 创建临时微虚机，由 CI 在客户机内通�
 
 ## 文档
 
-- [宿主与镜像兼容性](docs/compatibility.zh-CN.md)
-- [启动、登录、停机恢复和销毁](docs/usage.zh-CN.md)
-- [镜像导入、配方、内核和验证](docs/images.zh-CN.md)
+- [宿主要求、构建与诊断](docs/install.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md)
+- [虚机资源、多节点与访问配置](docs/usage.zh-CN.md#设置虚机资源和网络)
+- [镜像导入、自有文件组包、配方和启动验证](docs/images.zh-CN.md) · [发行版构建配方](fixtures/README.md)
 - [私网、NAT、端口映射和排错](docs/networking.zh-CN.md)
 - [CLI 参数、JSON 和退出码](docs/cli.zh-CN.md)
 - [配置样例](examples/README.md) 和 [JSON Schema](schemas/)

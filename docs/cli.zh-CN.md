@@ -1,8 +1,8 @@
 # CLI 参考
 
-[English](cli.md)
+[English](cli.md) · [全生命周期教程](usage.zh-CN.md)
 
-选项写在位置参数之前。运行 `flintyard COMMAND --help` 可查看该命令的完整选项。通用参数包括 `--state-dir DIR`（默认 `/var/lib/flintyard`）、`--timeout DURATION` 和 `-o text|json`。超时使用 Go 时长格式，例如 `180s` 或 `5m`。
+选项写在位置参数之前。运行 `/opt/flintyard/bin/flintyard up --help` 可查看命令的完整选项。通用参数包括 `--state-dir DIR`（默认 `/var/lib/flintyard`）、`--timeout DURATION`（默认 `180s`）和 `-o text|json`。超时使用 Go 时长格式，例如 `5m`。
 
 | 命令 | 用途 |
 | --- | --- |
@@ -12,7 +12,7 @@
 | `image import --sha256 DIGEST PACKAGE` | 校验并导入本地镜像包。 |
 | `image import --spec FILE --output PACKAGE` | 从本地文件组装并导入新镜像包。 |
 | `image inspect IMAGE` | 查看包文件或已导入的镜像 ID。 |
-| `image validate --public-key FILE IMAGE` | 启动临时虚机并执行配置的访问探针。 |
+| `image validate [--public-key FILE] IMAGE` | 启动临时虚机并执行镜像声明的访问探针。仅 `seed-v1` 需要公钥。 |
 | `up --file FILE` | 创建或恢复一个环境。 |
 | `status [--probe] ENV` | 查看环境状态，可再次执行访问探针。 |
 | `list [--probe]` | 列出当前状态目录中的环境。 |
@@ -28,22 +28,23 @@
 - `up --wait configured` 使用环境中配置的探针。可通过 `--wait tcp` 或 `--wait ssh_banner` 指定探针。使用 `--wait none` 时，虚机启动后直接返回。
 - `up` 和 `image validate` 的 `--keep-failed` 可保留已确认的资源供排查。检查完成后运行 `down`。
 - `logs --tail N` 读取最后 N 行，默认 200 行。`logs --follow` 以文本模式持续向标准输出写入日志，可显式设置 `--timeout`。
+- `image inspect` 和 `image import` 支持 `--max-bytes`（默认展开后 64 GiB）和 `--max-files`（默认 32）。
 
 ## 输出与事件
 
 CLI 默认输出可读文本。`list` 显示环境表格，`status` 显示环境、节点和端口映射。文本模式下日志按原样输出，错误信息写到标准错误。
 
-以下示例沿用快速开始中的 `FY`、`STATE` 和 `demo` 环境。 [单节点快速开始](usage.zh-CN.md#单节点快速开始)
+以下命令使用快速开始创建的 `debian-demo` 环境和专用状态目录。 [单节点快速开始](usage.zh-CN.md#单节点快速开始)
 
 ```sh
-sudo "$FY" list --state-dir "$STATE"
-sudo "$FY" status --state-dir "$STATE" --probe demo
-sudo "$FY" status --state-dir "$STATE" --probe -o json demo | jq -er '.data.nodes[] | select(.access.probe_passed) | .access.host'
+sudo /opt/flintyard/bin/flintyard list --state-dir /var/lib/flintyard-tutorial
+sudo /opt/flintyard/bin/flintyard status --state-dir /var/lib/flintyard-tutorial --probe debian-demo
+sudo /opt/flintyard/bin/flintyard status --state-dir /var/lib/flintyard-tutorial +  --probe -o json debian-demo | jq -er 'select(.ok) | .data.nodes[] | select(.access.probe_passed) | .access.host'
 ```
 
 使用 `-o json` 时，标准输出包含一个 JSON 结果，字段为 `api_version`、`operation_id`、`ok`、`data` 和 `error`。脚本应分别捕获标准输出和标准错误。旧的 `--json` 仍可使用。脚本可根据 `error.code` 判断错误类型，诊断时查看 `error.message`。失败结果的 `data` 仍可能包含资源状态和清理详情。
 
-使用 `--events FILE` 记录 JSON Lines 事件，其中包含操作 ID、序号、阶段以及相关节点或资源身份。 [结果 Schema](../schemas/result-v1.schema.json) · [事件 Schema](../schemas/event-v1.schema.json) · [JSON 样例](../examples/README.md)
+在教程的 `up` 命令中加 `--events .local/quickstart/up.events.jsonl`，将进度追加到 JSON Lines 文件。事件包含操作 ID、序号、阶段以及相关节点或资源身份。用 `sudo tail .local/quickstart/up.events.jsonl` 查看。 [结果 Schema](../schemas/result-v1.schema.json) · [事件 Schema](../schemas/event-v1.schema.json) · [JSON 样例](../examples/README.md)
 
 | 退出码 | 含义 |
 | --- | --- |
@@ -56,7 +57,7 @@ sudo "$FY" status --state-dir "$STATE" --probe -o json demo | jq -er '.data.node
 | 7 | 清理不完整 |
 | 130 | 操作被中断 |
 
-清理失败时，可能优先返回清理错误。查看资源状态和诊断信息后，参考 [回收残留资源](usage.zh-CN.md#回收残留资源)。
+`E_STATE_INVALID` 表示状态根目录无法使用，例如权限或所有权元数据不符合要求。`E_INTERNAL` 是未归类的操作错误。清理失败时，退出码 `7` 可能优先于原始错误。结合 `error.details.cleanup_errors` 和诊断记录处理。 [回收残留资源](usage.zh-CN.md#回收残留资源)
 
 ## 访问状态
 

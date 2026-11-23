@@ -1,6 +1,6 @@
 # Flintyard
 
-[简体中文](README.md) · [Installation](docs/install.md) · [User guide](docs/usage.md) · [CLI reference](docs/cli.md)
+[简体中文](README.md) · [Lifecycle walkthrough](docs/usage.md) · [CLI reference](docs/cli.md)
 
 Flintyard is a local Firecracker CLI for development machines and self-hosted CI. It starts one or more Linux microVMs from an image, gives each node its own writable disk and IPv4 address, and removes the environment when you are done.
 
@@ -18,9 +18,7 @@ Flintyard is a local Firecracker CLI for development machines and self-hosted CI
 
 ## Quick start
 
-1. Build the CLI on a Linux KVM host, install Firecracker and jailer, and run `doctor`. [Installation](docs/install.md)
-2. Use a `.fyimg` for the host architecture or build a Debian image. [Build a Debian image](fixtures/README.en.md#debian-stock-kernel-offline-image)
-3. Import the image, start a node, log in over SSH, and remove the environment when finished. [Single-node quickstart](docs/usage.md#single-node-quickstart)
+Follow one walkthrough to **build the CLI → install the runtime → build or import an image → configure a guest → boot and log in → stop, resume, and remove**. Run the examples from the same checkout even if you switch shells. [From source to your first microVM](docs/usage.md#single-node-quickstart)
 
 ## Run a container application in CI
 
@@ -30,9 +28,9 @@ The GitLab example uses Flintyard to provision disposable microVMs. CI deploys G
 
 ## Documentation
 
-- [Host and image compatibility](docs/compatibility.md)
-- [Boot, log in, stop, resume, and destroy](docs/usage.md)
-- [Image import, build recipes, kernels, and validation](docs/images.md)
+- [Host setup, builds, and diagnostics](docs/install.md) · [Compatibility](docs/compatibility.md)
+- [Node resources, multiple nodes, and access settings](docs/usage.md#configure-node-resources-and-networking)
+- [Image import, packaging, build recipes, and boot validation](docs/images.md) · [Distribution recipes](fixtures/README.en.md)
 - [Private networks, NAT, port forwarding, and troubleshooting](docs/networking.md)
 - [CLI flags, JSON results, and exit codes](docs/cli.md)
 - [Configuration examples](examples/README.en.md) and [JSON schemas](schemas/)

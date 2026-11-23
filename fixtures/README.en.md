@@ -1,124 +1,155 @@
 # Distribution image recipes
 
-[简体中文](README.md)
+[简体中文](README.md) · [Image build reference](../docs/images.md)
 
-Use these recipes to build Flintyard images from pinned Ubuntu, Debian, Rocky Linux, and Alpine inputs. The preparation tools require Linux and Python 3.9 or newer. Set `FY` using the installation guide. Use `TMPDIR` for downloads and intermediates on a filesystem with more space. Set `STATE` to a root-managed path to keep the image cache on a different filesystem. [Installation](../docs/install.md) · [Input lock](lock.json) · [Compatibility](../docs/compatibility.md)
+Run the commands from the repository root. Preparing inputs requires Linux and Python 3.9+. Install Flintyard at `/opt/flintyard/bin/flintyard` and build on a host matching the image architecture. Each command block defines its own variables and reads the files named in the preceding steps. Choose new paths for prepared input directories, recipes, and image packages. [Build the CLI](../docs/usage.md#1-prepare-the-host-and-build-flintyard) · [Input lock](lock.json) · [Compatibility](../docs/compatibility.md)
 
-## Prepare a root filesystem
-
-Run from the repository root. Choose `ubuntu`, `debian`, `rocky`, or `alpine`. The lock supplies the URL and digest for the selected distribution and architecture. The Ubuntu preparer normalizes the device entries listed in the lock. Use a kernel with devtmpfs for the resulting image.
-
-```sh
-ARCH="$(uname -m)"
-FAMILY=ubuntu
-ROOT_WORK="$(mktemp -d)"
-curl --fail --location --output "$ROOT_WORK/source.archive" \
-  "$(jq -er --arg family "$FAMILY" --arg arch "$ARCH" '.families[$family].arches[$arch].url' fixtures/lock.json)"
-python3 fixtures/prepare.py "$FAMILY" "$ARCH" --input "$ROOT_WORK/source.archive" \
-  --output "$ROOT_WORK/$FAMILY-$ARCH.tar.gz"
-```
-
-## Build with a kernel from source
-
-This example uses the prepared Ubuntu root filesystem and pinned upstream Linux source. Install the recipe's compiler dependencies and generate the configuration on the target architecture. Use `--modules disabled` with the minimal Debian, Rocky Linux, or Alpine roots. Recipes without prepared package bundles require access to the respective package repository. [Build requirements and recipe options](../docs/images.md#build-a-reusable-image)
-
-```sh
-KERNEL_WORK="$(mktemp -d)"
-KERNEL_RELEASE="$(jq -er .kernel.release fixtures/lock.json)"
-KERNEL_ARCHIVE="$KERNEL_WORK/linux-$KERNEL_RELEASE.tar.xz"
-curl --fail --location --output "$KERNEL_ARCHIVE" "$(jq -er .kernel.url fixtures/lock.json)" &&
-printf '%s  %s\n' "$(jq -er .kernel.sha256 fixtures/lock.json)" "$KERNEL_ARCHIVE" | sha256sum -c &&
-tar -xJf "$KERNEL_ARCHIVE" -C "$KERNEL_WORK"
-```
-
-Generate the configuration and build the image using the prepared Ubuntu root filesystem.
-
-```sh
-python3 fixtures/configure-kernel.py --source "$KERNEL_WORK/linux-$KERNEL_RELEASE" \
-  --architecture "$ARCH" --output "$KERNEL_WORK/ubuntu.config" --modules enabled
-python3 fixtures/render.py ubuntu "$ARCH" --rootfs "$ROOT_WORK/ubuntu-$ARCH.tar.gz" \
-  --kernel "$KERNEL_ARCHIVE" --config "$KERNEL_WORK/ubuntu.config" \
-  --output "$ROOT_WORK/ubuntu.fyimg" --recipe "$ROOT_WORK/ubuntu.recipe.json"
-sudo "$FY" image build --state-dir "${STATE:-/var/lib/flintyard}" --offline --timeout 150m \
-  --recipe "$ROOT_WORK/ubuntu.recipe.json"
-```
+| Goal | Steps |
+| --- | --- |
+| Debian stock kernel | [Offline Debian walkthrough](#debian-stock-kernel-offline-image). |
+| Ubuntu stock kernel | [Prepare the Ubuntu root filesystem](#prepare-a-root-filesystem) → [Ubuntu stock kernel](#ubuntu-stock-kernel). |
+| Rocky Linux stock kernel | [Prepare the Rocky root filesystem](#prepare-a-root-filesystem) → [Rocky Linux stock kernel](#rocky-linux-stock-kernel). |
+| Ubuntu kernel from source | [Prepare the Ubuntu root filesystem](#prepare-a-root-filesystem) → [Build with a kernel from source](#build-with-a-kernel-from-source). |
+| Alpine offline packages and kernel from source | [Prepare the Alpine root filesystem](#prepare-a-root-filesystem) → [Download pinned kernel source](#download-the-pinned-kernel-source) → [Alpine offline packages](#alpine-offline-packages). |
 
 ## Debian stock-kernel offline image
 
-Run from the repository root. The preparation tools use `sfdisk` and `debugfs` to verify the pinned cloud archive and extract the matching root disk, stock kernel, and initrd. Use `DEBIAN_INPUTS` from this step in the container example. [Debian input lock](debian-cloud.lock.json) · [Container example](../docs/container-workload.md)
+The main walkthrough includes the download, verification, extraction, recipe rendering, and build commands. To prepare inputs for the container workload, stop after the download and extraction block. It writes `.local/quickstart/debian-inputs/`. To produce a bootable `.fyimg`, continue with the build block. [Debian build steps](../docs/usage.md#3-build-the-debian-image-or-prepare-an-existing-image) · [Debian input lock](debian-cloud.lock.json) · [Container workload](../docs/container-workload.md)
+
+## Prepare a root filesystem
+
+Set `family=ubuntu` to the distribution you need, using `ubuntu`, `rocky`, `alpine`, or `debian`. This writes `.local/fixtures/<family>/rootfs.tar.gz`. The preparation script checks the source archive and normalizes it against the lock. Ubuntu's normalized root filesystem needs devtmpfs in the boot kernel.
 
 ```sh
-ARCH="$(uname -m)"
-DEMO="$(mktemp -d)"
-curl --fail --location --output "$DEMO/debian-cloud.tar.xz" \
-  "$(jq -er --arg arch "$ARCH" '.architectures[$arch].url' fixtures/debian-cloud.lock.json)"
-python3 fixtures/debian-cloud.py "$ARCH" --archive "$DEMO/debian-cloud.tar.xz" \
-  --output-dir "$DEMO/inputs"
-DEBIAN_INPUTS="$DEMO/inputs"
+(
+  set -eu
+  family=ubuntu
+  arch=$(uname -m)
+  work=".local/fixtures/$family"
+  mkdir -p "$work"
+  url=$(jq -er --arg family "$family" --arg arch "$arch" \
+    '.families[$family].arches[$arch].url' fixtures/lock.json)
+  curl --fail --location --output "$work/source.archive" "$url"
+  python3 fixtures/prepare.py "$family" "$arch" \
+    --input "$work/source.archive" --output "$work/rootfs.tar.gz"
+)
 ```
-
-To produce a `.fyimg`, render and build the offline recipe from those inputs.
-
-```sh
-RECIPE="$DEMO/debian.recipe.json"
-python3 fixtures/render-debian-cloud.py "$ARCH" --input-dir "$DEBIAN_INPUTS" \
-  --output "$DEMO/debian.fyimg" --recipe "$RECIPE"
-sudo "$FY" image build --state-dir "${STATE:-/var/lib/flintyard}" --offline --timeout 20m \
-  -o json --recipe "$RECIPE" \
-  > "$DEMO/build.json"
-IMAGE="$DEMO/debian.fyimg"
-EXPECTED_SHA256="$(jq -er '.data.package_sha256' "$DEMO/build.json")"
-```
-
-Use `IMAGE` and `EXPECTED_SHA256` to start a guest. [Single-node quickstart](../docs/usage.md#single-node-quickstart)
 
 ## Ubuntu stock kernel
 
-Prepare the Ubuntu root filesystem, then download the kernel and modules for the same architecture. Install `dpkg-deb` on the preparation host. The script verifies the locked package hashes and extracts the files. The recipe generates the initrd in the build root. [Ubuntu kernel lock](ubuntu-original.lock.json)
+Prepare `.local/fixtures/ubuntu/rootfs.tar.gz` and install `dpkg-deb` on the host. The preparation script checks and extracts the kernel and modules packages. The build generates the initrd. [Ubuntu kernel lock](ubuntu-original.lock.json)
 
 ```sh
-curl --fail --location --output "$ROOT_WORK/linux-image.deb" \
-  "$(jq -er --arg arch "$ARCH" '.architectures[$arch].image_package.url' fixtures/ubuntu-original.lock.json)"
-curl --fail --location --output "$ROOT_WORK/linux-modules.deb" \
-  "$(jq -er --arg arch "$ARCH" '.architectures[$arch].modules_package.url' fixtures/ubuntu-original.lock.json)"
-python3 fixtures/ubuntu-original.py "$ARCH" \
-  --base-rootfs "$ROOT_WORK/ubuntu-$ARCH.tar.gz" \
-  --image-deb "$ROOT_WORK/linux-image.deb" --modules-deb "$ROOT_WORK/linux-modules.deb" \
-  --output-dir "$ROOT_WORK/ubuntu-original-inputs"
-python3 fixtures/render-ubuntu-original.py "$ARCH" --input-dir "$ROOT_WORK/ubuntu-original-inputs" \
-  --output "$ROOT_WORK/ubuntu-original.fyimg" --recipe "$ROOT_WORK/ubuntu-original.recipe.json"
-sudo "$FY" image build --state-dir "${STATE:-/var/lib/flintyard}" --offline --timeout 20m \
-  --recipe "$ROOT_WORK/ubuntu-original.recipe.json"
+(
+  set -eu
+  arch=$(uname -m)
+  work=.local/fixtures/ubuntu-original
+  mkdir -p "$work"
+  image_url=$(jq -er --arg arch "$arch" '.architectures[$arch].image_package.url' \
+    fixtures/ubuntu-original.lock.json)
+  modules_url=$(jq -er --arg arch "$arch" '.architectures[$arch].modules_package.url' \
+    fixtures/ubuntu-original.lock.json)
+  curl --fail --location --output "$work/linux-image.deb" "$image_url"
+  curl --fail --location --output "$work/linux-modules.deb" "$modules_url"
+  python3 fixtures/ubuntu-original.py "$arch" --base-rootfs .local/fixtures/ubuntu/rootfs.tar.gz \
+    --image-deb "$work/linux-image.deb" --modules-deb "$work/linux-modules.deb" \
+    --output-dir "$work/inputs"
+  python3 fixtures/render-ubuntu-original.py "$arch" --input-dir "$work/inputs" \
+    --output "$work/ubuntu.fyimg" --recipe "$work/build.recipe.json"
+  sudo /opt/flintyard/bin/flintyard image build --state-dir /var/lib/flintyard-tutorial \
+    --offline --timeout 20m --recipe "$work/build.recipe.json" -o json > "$work/build.json"
+)
 ```
 
 ## Rocky Linux stock kernel
 
-Prepare the Rocky Linux root filesystem, then download the RPMs and signing key for the same architecture from the lock files. Set `ROCKY_RPMS` to the package directory and `ROCKY_KEY` to the key file. The preparation script uses `rpmkeys`, `rpm2cpio`, and `cpio` to verify and unpack the packages. The recipe installs local RPMs, generates an initrd, and selects virtio PCI. [Kernel lock](rocky-original-kernel.lock.json) · [RPM lock](rocky-packages.lock.json)
+Prepare `.local/fixtures/rocky/rootfs.tar.gz` and install `rpmkeys`, `rpm2cpio`, and `cpio`. Download the RPMs and signing key from the lock. The preparation script checks package digests and signatures. The recipe uses local RPMs, generates an initrd, and enables virtio PCI. [Kernel lock](rocky-original-kernel.lock.json) · [RPM lock](rocky-packages.lock.json)
 
 ```sh
-python3 fixtures/rocky-original.py "$ARCH" \
-  --rootfs "$ROOT_WORK/rocky-$ARCH.tar.gz" --package-dir "$ROCKY_RPMS" --key "$ROCKY_KEY" \
-  --output-dir "$ROOT_WORK/rocky-inputs" --image "$ROOT_WORK/rocky.fyimg" \
-  --recipe "$ROOT_WORK/rocky.recipe.json"
-sudo "$FY" image build --state-dir "${STATE:-/var/lib/flintyard}" --offline --timeout 20m \
-  --recipe "$ROOT_WORK/rocky.recipe.json"
+(
+  set -eu
+  arch=$(uname -m)
+  work=.local/fixtures/rocky-original
+  mkdir -p "$work/rpms"
+  key_url=$(jq -er '.signing_key_url' fixtures/rocky-original-kernel.lock.json)
+  curl --fail --location --output "$work/RPM-GPG-KEY-Rocky-9" "$key_url"
+  jq -er --arg arch "$arch" '.packages[$arch] | to_entries[] | [.key, .value.url] | @tsv' \
+    fixtures/rocky-packages.lock.json > "$work/rpms.tsv"
+  while IFS="$(printf '\t')" read -r filename url; do
+    curl --fail --location --output "$work/rpms/$filename" "$url"
+  done < "$work/rpms.tsv"
+  python3 fixtures/rocky-original.py "$arch" --rootfs .local/fixtures/rocky/rootfs.tar.gz \
+    --package-dir "$work/rpms" --key "$work/RPM-GPG-KEY-Rocky-9" \
+    --output-dir "$work/inputs" --image "$work/rocky.fyimg" --recipe "$work/build.recipe.json"
+  sudo /opt/flintyard/bin/flintyard image build --state-dir /var/lib/flintyard-tutorial \
+    --offline --timeout 20m --recipe "$work/build.recipe.json" -o json > "$work/build.json"
+)
 ```
+
+## Build with a kernel from source
+
+The Ubuntu example uses the prepared `.local/fixtures/ubuntu/rootfs.tar.gz`. Install the native kernel build tools, then download the pinned upstream source. [Build tools and recipe options](../docs/images.md#build-a-reusable-image)
+
+### Download the pinned kernel source
+
+Use this archive for Ubuntu and Alpine source builds. The block retains `.local/fixtures/kernel/linux.tar.xz` and extracts `linux-<release>/` alongside it.
+
+```sh
+(
+  set -eu
+  work=.local/fixtures/kernel
+  mkdir -p "$work"
+  url=$(jq -er '.kernel.url' fixtures/lock.json)
+  digest=$(jq -er '.kernel.sha256' fixtures/lock.json)
+  curl --fail --location --output "$work/linux.tar.xz" "$url"
+  printf '%s  %s\n' "$digest" "$work/linux.tar.xz" | sha256sum -c
+  tar -xJf "$work/linux.tar.xz" -C "$work"
+)
+```
+
+### Render and build the Ubuntu source-kernel recipe
+
+```sh
+(
+  set -eu
+  arch=$(uname -m)
+  release=$(jq -er '.kernel.release' fixtures/lock.json)
+  work=.local/fixtures/ubuntu-source
+  mkdir -p "$work"
+  python3 fixtures/configure-kernel.py --source ".local/fixtures/kernel/linux-$release" \
+    --architecture "$arch" --output "$work/kernel.config" --modules enabled
+  python3 fixtures/render.py ubuntu "$arch" --rootfs .local/fixtures/ubuntu/rootfs.tar.gz \
+    --kernel .local/fixtures/kernel/linux.tar.xz --config "$work/kernel.config" \
+    --output "$work/ubuntu.fyimg" --recipe "$work/build.recipe.json"
+  sudo /opt/flintyard/bin/flintyard image build --state-dir /var/lib/flintyard-tutorial \
+    --offline --timeout 150m --recipe "$work/build.recipe.json" -o json > "$work/build.json"
+)
+```
+
+For minimal Debian, Rocky Linux, and Alpine roots using the generic `render.py` source workflow, set `--modules disabled` unless the root already has `depmod` before build steps run. Recipes that fetch packages during the build need networking. The Alpine workflow below prepares its packages locally.
 
 ## Alpine offline packages
 
-Prepare the Alpine root filesystem and run the kernel download and extraction commands above. [Kernel source](#build-with-a-kernel-from-source)
-
-Bundle the pinned packages and indexes with the root filesystem, then render an offline recipe with a kernel configuration that disables modules. [Alpine package lock](alpine-packages.lock.json)
+Prepare `.local/fixtures/alpine/rootfs.tar.gz` and the [pinned kernel source](#download-the-pinned-kernel-source) first. Download the locked packages and indexes, bundle them into the root filesystem, and configure the kernel with modules disabled. The download needs network access. The build runs offline. [Alpine package lock](alpine-packages.lock.json)
 
 ```sh
-python3 fixtures/fetch-alpine.py "$ARCH" --output-dir "$ROOT_WORK/alpine-packages"
-python3 fixtures/alpine-bundle.py "$ARCH" --rootfs "$ROOT_WORK/alpine-$ARCH.tar.gz" \
-  --package-dir "$ROOT_WORK/alpine-packages" --output "$ROOT_WORK/alpine-$ARCH-offline.tar.gz"
-python3 fixtures/configure-kernel.py --source "$KERNEL_WORK/linux-$KERNEL_RELEASE" \
-  --architecture "$ARCH" --output "$KERNEL_WORK/alpine.config" --modules disabled
-python3 fixtures/render.py alpine "$ARCH" --rootfs "$ROOT_WORK/alpine-$ARCH-offline.tar.gz" \
-  --kernel "$KERNEL_ARCHIVE" --config "$KERNEL_WORK/alpine.config" \
-  --output "$ROOT_WORK/alpine.fyimg" --recipe "$ROOT_WORK/alpine.recipe.json"
-sudo "$FY" image build --state-dir "${STATE:-/var/lib/flintyard}" --offline --timeout 150m \
-  --recipe "$ROOT_WORK/alpine.recipe.json"
+(
+  set -eu
+  arch=$(uname -m)
+  release=$(jq -er '.kernel.release' fixtures/lock.json)
+  work=.local/fixtures/alpine-offline
+  mkdir -p "$work"
+  python3 fixtures/fetch-alpine.py "$arch" --output-dir "$work/packages"
+  python3 fixtures/alpine-bundle.py "$arch" --rootfs .local/fixtures/alpine/rootfs.tar.gz \
+    --package-dir "$work/packages" --output "$work/rootfs-offline.tar.gz"
+  python3 fixtures/configure-kernel.py --source ".local/fixtures/kernel/linux-$release" \
+    --architecture "$arch" --output "$work/kernel.config" --modules disabled
+  python3 fixtures/render.py alpine "$arch" --rootfs "$work/rootfs-offline.tar.gz" \
+    --kernel .local/fixtures/kernel/linux.tar.xz --config "$work/kernel.config" \
+    --output "$work/alpine.fyimg" --recipe "$work/build.recipe.json"
+  sudo /opt/flintyard/bin/flintyard image build --state-dir /var/lib/flintyard-tutorial \
+    --offline --timeout 150m --recipe "$work/build.recipe.json" -o json > "$work/build.json"
+)
 ```
+
+Use `data.image_id` in the corresponding `build.json` to configure a guest in the same state directory. To move the image to another host, copy both the `.fyimg` and `data.package_sha256` and follow the [import steps](../docs/images.md#import-an-existing-image).
