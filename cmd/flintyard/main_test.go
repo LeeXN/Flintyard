@@ -2,7 +2,10 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -32,6 +35,83 @@ func TestJSONEnvelopes(t *testing.T) {
 				t.Fatal("missing error")
 			}
 		})
+	}
+}
+
+func TestFlagDiagnostics(t *testing.T) {
+	for _, args := range [][]string{
+		{"version", "--unknown"},
+		{"version", "-o", "json", "--unknown"},
+		{"version", "--json", "--timeout", "invalid"},
+	} {
+		t.Run(strings.Join(args, " "), func(t *testing.T) {
+			var out, errOut bytes.Buffer
+			if code := run(args, &out, &errOut); code != 2 {
+				t.Fatalf("exit %d, stdout %q, stderr %q", code, out.String(), errOut.String())
+			}
+			if len(args) == 2 {
+				msg := strings.TrimSuffix(errOut.String(), "\n")
+				if out.Len() != 0 || !strings.HasPrefix(msg, "E_CONFIG_INVALID: ") || strings.Contains(msg, "\n") {
+					t.Fatalf("expected a single text diagnostic, stdout %q, stderr %q", out.String(), errOut.String())
+				}
+				return
+			}
+			var result envelope
+			if err := json.Unmarshal(out.Bytes(), &result); err != nil || result.OK ||
+				result.Error == nil || result.Error.Code != "E_CONFIG_INVALID" ||
+				result.Error.Stage != "parse" || errOut.Len() != 0 {
+				t.Fatalf("expected a single JSON diagnostic, stdout %q, stderr %q", out.String(), errOut.String())
+			}
+		})
+	}
+	var out, errOut bytes.Buffer
+	if code := run([]string{"up", "--help"}, &out, &errOut); code != 0 || out.Len() != 0 ||
+		strings.Count(errOut.String(), "Usage of up:") != 1 || !strings.Contains(errOut.String(), "-uid-range") {
+		t.Fatalf("expected command help, exit %d, stdout %q, stderr %q", code, out.String(), errOut.String())
+	}
+}
+
+func TestCommandErrorClassification(t *testing.T) {
+	raw := errors.New("cannot read boot ID")
+	imageFailure := fy.Failure("E_IMAGE_INVALID", "import", errors.New("missing image"))
+	for _, tc := range []struct {
+		err   error
+		cause error
+		code  string
+		exit  int
+	}{
+		{raw, raw, "E_INTERNAL", 4},
+		{fmt.Errorf("image inspection: %w", imageFailure), imageFailure, "E_IMAGE_INVALID", 4},
+		{fmt.Errorf("interrupted: %w", context.Canceled), context.Canceled, "E_CANCELLED", 130},
+	} {
+		failure := commandError(tc.err)
+		if failure.Code != tc.code || fy.ExitCode(failure) != tc.exit || !errors.Is(failure, tc.cause) {
+			t.Fatalf("%v: got %+v", tc.err, failure)
+		}
+	}
+}
+
+func TestCLIInvalidStateRoot(t *testing.T) {
+	root := t.TempDir()
+	if err := os.WriteFile(filepath.Join(root, "host.json"), []byte("{invalid"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	for _, args := range [][]string{
+		{"list", "-o", "json", "--state-dir", root},
+		{"status", "-o", "json", "--state-dir", root, "lab"},
+		{"logs", "-o", "json", "--state-dir", root, "lab"},
+		{"gc", "-o", "json", "--state-dir", root},
+	} {
+		var out, errOut bytes.Buffer
+		if code := run(args, &out, &errOut); code != 6 || errOut.Len() != 0 {
+			t.Fatalf("%v: exit %d, stdout %q, stderr %q", args, code, out.String(), errOut.String())
+		}
+		var result envelope
+		if err := json.Unmarshal(out.Bytes(), &result); err != nil || result.OK ||
+			result.Error == nil || result.Error.Code != "E_STATE_INVALID" ||
+			result.Error.Stage != "preflight" {
+			t.Fatalf("%v: expected a state-root error, stdout %q", args, out.String())
+		}
 	}
 }
 

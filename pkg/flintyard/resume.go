@@ -149,15 +149,7 @@ func (c *Client) resumeStopped(ctx context.Context, root state.Root, e environme
 		cleanupErr = errors.Join(cleanupErr, saveEnvironment(root, &e))
 		result = resultFromState(e)
 		if cleanupErr != nil {
-			var original *Error
-			if !errors.As(err, &original) {
-				original = Failure("E_LAUNCH_FAILED", "rollback", err)
-			}
-			copy := *original
-			copy.CleanupIncomplete = true
-			copy.Cause = errors.Join(err, cleanupErr)
-			copy.Details = map[string]any{"cleanup_errors": []string{cleanupErr.Error()}}
-			err = &copy
+			err = rollbackFailure(err, cleanupErr)
 		}
 	}()
 	if err = saveEnvironment(root, &e); err != nil {

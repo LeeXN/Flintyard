@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/LeeXN/Flintyard/internal/allocation"
@@ -15,6 +17,29 @@ import (
 	"github.com/LeeXN/Flintyard/internal/network"
 	"github.com/LeeXN/Flintyard/internal/state"
 )
+
+func rollbackFailure(err, cleanupErr error) *Error {
+	var original *Error
+	if !errors.As(err, &original) {
+		original = Failure("E_LAUNCH_FAILED", "rollback", err)
+	}
+	details := make(map[string]any)
+	switch originalDetails := original.Details.(type) {
+	case map[string]any:
+		maps.Copy(details, originalDetails)
+	case nil:
+	default:
+		details["operation_details"] = originalDetails
+	}
+	prior, _ := details["cleanup_errors"].([]string)
+	details["cleanup_errors"] = append(slices.Clone(prior), cleanupErr.Error())
+
+	failure := *original
+	failure.CleanupIncomplete = true
+	failure.Cause = errors.Join(err, cleanupErr)
+	failure.Details = details
+	return &failure
+}
 
 func environmentJournals(root state.Root, e environmentState) ([]*state.Journal, error) {
 	path := filepath.Join(envDir(root, e.ID), "operations")
@@ -278,7 +303,7 @@ func (c *Client) Stop(ctx context.Context, r StopRequest) (EnvironmentResult, er
 	}
 	root, err := state.OpenRoot(ctx, c.StateDir, false)
 	if err != nil {
-		return result, Failure("E_SPEC_CONFLICT", "preflight", err)
+		return result, stateRootFailure(err)
 	}
 	e, err := findEnvironment(ctx, root, r.Environment)
 	if err != nil {
@@ -326,7 +351,7 @@ func (c *Client) down(ctx context.Context, r DownRequest, audit bool) (CleanupRe
 	if os.IsNotExist(err) {
 		entries, e := os.ReadDir(filepath.Join(c.StateDir, "envs"))
 		if e == nil && len(entries) > 0 {
-			return result, Failure("E_SPEC_CONFLICT", "preflight", fmt.Errorf("environment state exists without root metadata"))
+			return result, stateRootFailure(fmt.Errorf("environment state exists without root metadata"))
 		}
 		if e := rejectLostReservation(ctx, c.StateDir, ""); e != nil {
 			return result, e
@@ -336,7 +361,7 @@ func (c *Client) down(ctx context.Context, r DownRequest, audit bool) (CleanupRe
 		return result, nil
 	}
 	if err != nil {
-		return result, Failure("E_SPEC_CONFLICT", "preflight", err)
+		return result, stateRootFailure(err)
 	}
 	e, err := findEnvironment(ctx, root, r.Environment)
 	if errors.Is(err, errEnvironmentNotFound) {

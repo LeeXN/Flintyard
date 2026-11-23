@@ -21,7 +21,7 @@ import (
 func (c *Client) Status(ctx context.Context, r StatusRequest) (EnvironmentResult, error) {
 	root, err := state.OpenRoot(ctx, c.StateDir, false)
 	if err != nil {
-		return EnvironmentResult{}, Failure("E_SPEC_CONFLICT", "preflight", err)
+		return EnvironmentResult{}, stateRootFailure(err)
 	}
 	e, err := findEnvironment(ctx, root, r.Environment)
 	if err != nil {
@@ -49,12 +49,12 @@ func (c *Client) List(ctx context.Context, r ListRequest) (ListResult, error) {
 	if os.IsNotExist(err) {
 		entries, e := os.ReadDir(filepath.Join(c.StateDir, "envs"))
 		if e == nil && len(entries) > 0 {
-			return result, Failure("E_SPEC_CONFLICT", "preflight", fmt.Errorf("environment state exists without root metadata"))
+			return result, stateRootFailure(fmt.Errorf("environment state exists without root metadata"))
 		}
 		return result, nil
 	}
 	if err != nil {
-		return result, Failure("E_SPEC_CONFLICT", "preflight", err)
+		return result, stateRootFailure(err)
 	}
 	all, err := scanEnvironments(ctx, root)
 	if err != nil {
@@ -289,7 +289,7 @@ func (c *Client) openStartupLog(ctx context.Context, r LogsRequest) (*startupLog
 	}
 	root, err := state.OpenRoot(ctx, c.StateDir, false)
 	if err != nil {
-		return nil, Failure("E_SPEC_CONFLICT", "preflight", err)
+		return nil, stateRootFailure(err)
 	}
 	e, err := findEnvironment(ctx, root, r.Environment)
 	if err != nil {

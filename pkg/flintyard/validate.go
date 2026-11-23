@@ -106,7 +106,7 @@ func (c *Client) ValidateImage(ctx context.Context, r ValidateRequest) (out Vali
 	}
 	root, err := state.OpenRoot(ctx, c.StateDir, true)
 	if err != nil {
-		return out, Failure("E_SPEC_CONFLICT", "preflight", err)
+		return out, stateRootFailure(err)
 	}
 	base := filepath.Join(root.Path, "validations", "sha256-"+strings.TrimPrefix(img.ID, "sha256:"))
 	if err = state.PrivateDir(base); err != nil {
